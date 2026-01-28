@@ -15,7 +15,9 @@
         API Documentation: Integrated Swagger/OpenAPI UI for endpoint testing.
 
     🎯 Key Features
-        Identity & Access Management: Secure JWT-based authentication with Role-Based Access Control (RBAC).Course Management: Full CRUD for instructors to manage video lessons, descriptions, and metadata.Learning Paths: Ability to group individual courses into structured career tracks.
+        Identity & Access Management: Secure JWT-based authentication with Role-Based Access Control (RBAC).
+        Course Management: Full CRUD for instructors to manage video lessons, descriptions, and metadata.
+        Learning Paths: Ability to group individual courses into structured career tracks.
         Progress Tracking Engine: Dynamic calculation of completion percentages per course and path.
         Interactive Dashboard Data: Specialized endpoints to feed student progress charts and "Continue Learning" sections.
         Resource Storage: Integration with cloud storage (S3/MinIO) for course assets.
@@ -67,25 +69,6 @@
 📄 LicenseDistributed under the MIT License. 
     See LICENSE for more information.
 
-Last Updated: October 2023
+Last Updated: 28-01-2026
 Project Status: 🏗️ Core API Development
 Next Milestone: Integration of Stripe Payment Gateway for premium courses.
-
-```
-    mermaid
-    useCaseDiagram
-    actor Student
-    actor Instructor
-    package "LMS System" {
-        usecase "Login" as UC1
-        usecase "Enroll in Course" as UC2
-        usecase "Watch Video" as UC3
-        usecase "Upload Course" as UC4
-    }
-    Student --> UC1
-    Student --> UC2
-    Student --> UC3
-    Instructor --> UC1
-    Instructor --> UC4
-    UC2 ..> UC1 : <<include>>
-```
