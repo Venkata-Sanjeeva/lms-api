@@ -1,10 +1,10 @@
-🎓 NexusLMS: Online Learning Platform Backend
+🎓 LMS: Online Learning Platform Backend
     Version: 1.0.0
     Project Type: RESTful API Development
     Domain: EdTech / E-Learning
 
 📋 Project Overview
-    NexusLMS is a robust backend solution built with Spring Boot, designed to power modern online learning environments. It handles the complexities of content delivery, automated learning paths, and real-time student progress tracking, allowing educational institutions to scale their digital presence.
+    LMS is a robust backend solution built with Spring Boot, designed to power modern online learning environments. It handles the complexities of content delivery, automated learning paths, and real-time student progress tracking, allowing educational institutions to scale their digital presence.
 
 🏗️ Project ArchitectureThis project follows a Layered Architecture pattern to ensure separation of concerns and maintainability:
 
@@ -23,17 +23,17 @@
         Resource Storage: Integration with cloud storage (S3/MinIO) for course assets.
 
 🚀 Getting Started
-    Prerequisites
+    Prerequisites:-
         Java 17 or higher
         Maven 3.8+
         PostgreSQL 14+
         IDE (IntelliJ IDEA recommended)
-    Installation
+    Installation:-
         # Clone the repository
-        git clone https://github.com/yourusername/nexus-lms-backend.git
+        git clone https://github.com/yourusername/lms-backend.git
 
         # Navigate to project directory
-        cd nexus-lms-backend
+        cd lms-backend
 
         # Configure database in src/main/resources/application.properties
         # Run the application
@@ -41,15 +41,15 @@
 
 📁 Project Artifacts
     1. Security Core
-        Path: src/main/java/com/nexus/config/security/
+        Path: src/main/java/com/lms/config/security/
         Logic: Implements JWT filters and BCrypt password encoding.
     2. Course Logic & Progress Engine
-        Path: src/main/java/com/nexus/service/
+        Path: src/main/java/com/lms/service/
         Logic: Contains the math for calculating 
             $Progress = (\frac{Completed}{Total}) \times 100
             $ and enrollment validation.
     3. API Endpoints
-        Path: src/main/java/com/nexus/controller/
+        Path: src/main/java/com/lms/controller/
         Scope: Organized into /api/auth, /api/student, and /api/instructor.
 
 🔧 Technology Stack
