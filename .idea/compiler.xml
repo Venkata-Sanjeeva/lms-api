@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
+<<<<<<< Updated upstream
       <profile name="Annotation profile for cat-api" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -18,5 +19,11 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cat-api" options="-parameters" />
     </option>
+=======
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="cat-api" target="17" />
+    </bytecodeTargetLevel>
+>>>>>>> Stashed changes
   </component>
 </project>
