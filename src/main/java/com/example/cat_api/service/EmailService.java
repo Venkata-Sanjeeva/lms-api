@@ -64,11 +64,11 @@ public class EmailService {
         	String htmlContent = String.format("""
         	    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e1e1e1; padding: 20px; border-radius: 10px;">
         	        <h2 style="color: #2e6c80; text-align: center;">Password Reset Request</h2>
-        	        <p>Dear User,</p>
-        	        <p>We received a request to reset the password for your <strong>Cat API</strong> account. Click the button below to proceed with the reset:</p>
+        	        <p>Dear CAT Learner,</p>
+        	        <p>We received a request to reset the password from your <strong>Code Arena Training</strong> account. Click the button below to proceed with the reset:</p>
         	        
         	        <div style="text-align: center; margin: 30px 0;">
-        	            <a href="%s" style="background-color: #2e6c80; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Reset My Password</a>
+        	            <a href="%s" style="background-color: #2e6c80; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Reset Password</a>
         	        </div>
         	        
         	        <p style="font-size: 0.9em; color: #666;">
