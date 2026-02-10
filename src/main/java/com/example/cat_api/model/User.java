@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -33,6 +35,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Roles role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonProgress> progressList = new ArrayList<>();
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

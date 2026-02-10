@@ -42,4 +42,7 @@ public class Lesson {
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     // orphanRemoval = true ensures that Hibernate actually deletes that record from the database. Without it, the record might stay in the database with a null
     private List<Resource> resourceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonProgress> userProgressList = new ArrayList<>();
 }
