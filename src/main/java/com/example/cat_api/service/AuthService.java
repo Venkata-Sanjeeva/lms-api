@@ -45,6 +45,7 @@ public class AuthService {
             if (isPasswordVerified) {
                 User verifiedUser = registerAndLoginService.getUserByEmail(request.getEmail());
 
+
                 String token = jwtUtil.generateTokenUsingEmailAndRole(request.getEmail(), verifiedUser.getRole());
 
                 return new AuthResponse(token, "Login Successful", verifiedUser.getRole());
