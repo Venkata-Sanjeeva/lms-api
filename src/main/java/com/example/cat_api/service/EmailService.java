@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +24,16 @@ import com.example.cat_api.repository.UserRepository;
 @Service
 public class EmailService {
 
-	private JavaMailSender mailSender;
-	private UserRepository userRepo;
-	private PasswordResetTokenRepository tokenRepository;
+	private final JavaMailSender mailSender;
+	private final UserRepository userRepo;
+	private final PasswordResetTokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
 	
-	public EmailService(JavaMailSender mailSender, UserRepository userRepo, PasswordResetTokenRepository tokenRepository) {
+	public EmailService(JavaMailSender mailSender, UserRepository userRepo, PasswordResetTokenRepository tokenRepository, PasswordEncoder passwordEncoder) {
 		this.mailSender = mailSender;
 		this.userRepo = userRepo;
 		this.tokenRepository = tokenRepository;
+        this.passwordEncoder = passwordEncoder;
 	}
     
     @Async
@@ -102,8 +105,8 @@ public class EmailService {
         // 3. Update the User's password
         User user = resetToken.getUser();
         // CRITICAL: Always encode the password before saving!
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
 
         // 4. Delete the token so it's "One-Time Use" only
         tokenRepository.delete(resetToken);
