@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "courses", uniqueConstraints = {
@@ -41,6 +42,9 @@ public class Course {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Module> moduleList;
 
     @PrePersist
     protected void onCreate() {
