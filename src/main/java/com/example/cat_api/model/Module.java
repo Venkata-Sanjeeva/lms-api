@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "modules")
 @Getter
@@ -28,5 +31,8 @@ public class Module {
     @JsonIgnore
     @ToString.Exclude  // <--- This stops the infinite loop!
     private Course course;
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
+    private List<Lesson> lessons = new ArrayList<>();
 
 }

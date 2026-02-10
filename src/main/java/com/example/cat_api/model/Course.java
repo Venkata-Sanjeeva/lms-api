@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -44,7 +45,7 @@ public class Course {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Module> moduleList;
+    private List<Module> moduleList = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
