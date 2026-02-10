@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "lessons")
 @Getter
@@ -35,4 +38,8 @@ public class Lesson {
     @ToString.Exclude // Prevent infinite loops
     @JsonIgnore      // Prevent infinite recursion in JSON
     private Module module;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    // orphanRemoval = true ensures that Hibernate actually deletes that record from the database. Without it, the record might stay in the database with a null
+    private List<Resource> resourceList = new ArrayList<>();
 }
