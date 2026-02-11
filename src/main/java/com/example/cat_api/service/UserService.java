@@ -13,6 +13,10 @@ public class UserService {
     public UserService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
+    
+    public User getUserByUniqueId(String uniqueId) {
+    	return userRepo.findByUserUniqueId(uniqueId).orElseThrow(() -> new UserNotFoundException("User with " + uniqueId + " not found!"));
+    }
 
     public User getUserByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with " + email + " not found!"));

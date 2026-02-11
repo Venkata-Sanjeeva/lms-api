@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.cat_api.dto.CourseOverviewDTO;
 import com.example.cat_api.enums.Difficulty;
 import com.example.cat_api.exceptions.CourseNotFoundException;
-import com.example.cat_api.model.Course;
 import com.example.cat_api.service.CourseService;
 
 @RestController
@@ -38,7 +37,7 @@ public class CourseController {
 	public ResponseEntity<?> getCourseDetails(@PathVariable String courseUniqueId) {
 		CourseOverviewDTO courseDto;
 		try {
-			courseDto = courseService.fetchCourseByUniqueId(courseUniqueId);
+			courseDto = courseService.fetchCourseByUniqueIdAndConvertToDto(courseUniqueId);
 		} catch (CourseNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}

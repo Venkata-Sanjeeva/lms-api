@@ -54,11 +54,15 @@ public class CourseService {
 		return courseRepo.findByTitleContainingIgnoreCase(title);
 	}
 	
-	public CourseOverviewDTO fetchCourseByUniqueId(String uniqueId) throws CourseNotFoundException {
+	public CourseOverviewDTO fetchCourseByUniqueIdAndConvertToDto(String uniqueId) throws CourseNotFoundException {
+		return convertToOverviewDto(fetchCourseByUniqueId(uniqueId));
+	}
+	
+	public Course fetchCourseByUniqueId(String uniqueId) {
 		Optional<Course> courseOpt = courseRepo.findByCourseUniqueId(uniqueId);
 		
 		if(courseOpt.isPresent()) {
-			return convertToOverviewDto(courseOpt.get());
+			return courseOpt.get();
 		}
 		
 		throw new CourseNotFoundException("Course not found with ID: " + uniqueId);
