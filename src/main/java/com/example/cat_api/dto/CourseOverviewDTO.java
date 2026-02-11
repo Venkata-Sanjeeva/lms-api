@@ -18,7 +18,7 @@ public class CourseOverviewDTO {
     private String instructorName;
     private Difficulty difficulty;
     private Double rating;
-    private Integer totalStudents;
+    private Long totalStudents;
     private String duration; // e.g., "12h 30m"
     private Double price;
 }

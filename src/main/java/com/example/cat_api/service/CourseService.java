@@ -10,15 +10,21 @@ import com.example.cat_api.dto.CourseOverviewDTO;
 import com.example.cat_api.enums.Difficulty;
 import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.model.Course;
+import com.example.cat_api.repository.CourseEnrollmentRepository;
 import com.example.cat_api.repository.CourseRepository;
 
 @Service
 public class CourseService {
 
 	private CourseRepository courseRepo;
+	private CourseEnrollmentRepository courseEnrollRepo;
 	
-	public CourseService(CourseRepository courseRepo) {
+	public CourseService(
+			CourseRepository courseRepo,
+			CourseEnrollmentRepository courseEnrollRepo
+			) {
 		this.courseRepo = courseRepo;
+		this.courseEnrollRepo = courseEnrollRepo;
 	}
 	
 	public List<CourseOverviewDTO> fetchAllCourseOverviewDtos(Difficulty difficulty) {
@@ -34,7 +40,7 @@ public class CourseService {
 		            null,
 		            course.getDifficulty(),
 		            null,
-		            null,
+		            courseEnrollRepo.countByCourseId(course.getId()),
 		            null,
 		            null
 		        ))
@@ -67,7 +73,7 @@ public class CourseService {
 			courseDto.setPrice(null);
 			courseDto.setRating(null);
 			courseDto.setThumbnailUri(null);
-			courseDto.setTotalStudents(0);
+			courseDto.setTotalStudents(courseEnrollRepo.countByCourseId(course.getId()));
 			
 		}
 		
