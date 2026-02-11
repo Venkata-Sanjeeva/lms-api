@@ -40,6 +40,9 @@ public class SecurityConfig {
                                 "/api/auth/user/register",
                                 "/api/auth/admin/register",
                                 "/api/auth/login",
+                                
+                                // public links
+                                "/api/courses/**",
 
                                 // ✅ Swagger URLs
                                 "/swagger-ui/**",
