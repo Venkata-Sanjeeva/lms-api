@@ -67,19 +67,29 @@ public class CourseService {
 	public List<CourseOverviewDTO> fetchAllCourseOverviewDtos(Difficulty difficulty, String title) {
 	    List<Course> courses;
 
-	    // Logic to determine which repository method to call
-	    if (title != null && !title.isEmpty()) {
+	    boolean hasTitle = (title != null && !title.isEmpty());
+	    boolean hasDifficulty = (difficulty != null);
+
+	    // 1. Both filters present
+	    if (hasTitle && hasDifficulty) {
+	        courses = courseRepo.findByDifficultyAndTitleContainingIgnoreCase(difficulty, title);
+	    } 
+	    // 2. Only title present
+	    else if (hasTitle) {
 	        courses = fetchAllCoursesByTitle(title);
-	    } else if (difficulty != null) {
+	    } 
+	    // 3. Only difficulty present
+	    else if (hasDifficulty) {
 	        courses = fetchAllCoursesByDifficulty(difficulty);
-	    } else {
+	    } 
+	    // 4. No filters
+	    else {
 	        courses = fetchAllCourses();
 	    }
 
-	    // Centralized mapping logic
 	    return courses.stream()
 	            .map(this::convertToOverviewDto)
 	            .collect(Collectors.toList());
-	}	
+	}
 	
 }

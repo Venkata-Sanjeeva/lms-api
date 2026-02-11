@@ -17,4 +17,7 @@ public interface CourseRepository extends JpaRepository<Course, Long>{
     
     // Search functionality
     List<Course> findByTitleContainingIgnoreCase(String title);
+    
+ // Finds courses that match BOTH difficulty AND title
+    List<Course> findByDifficultyAndTitleContainingIgnoreCase(Difficulty difficulty, String title);
 }
