@@ -27,26 +27,19 @@ public class CourseService {
 		this.courseEnrollRepo = courseEnrollRepo;
 	}
 	
-	public List<CourseOverviewDTO> fetchAllCourseOverviewDtos(Difficulty difficulty) {
-		List<Course> courses = (difficulty == null) 
-		        ? fetchAllCourses() 
-		        : fetchAllCoursesByDifficulty(difficulty);
-		
-		List<CourseOverviewDTO> overviewList = courses.stream()
-		        .map(course -> new CourseOverviewDTO(
-		            course.getCourseUniqueId(),
-		            course.getTitle(),
-		            null,
-		            null,
-		            course.getDifficulty(),
-		            null,
-		            courseEnrollRepo.countByCourseId(course.getId()),
-		            null,
-		            null
-		        ))
-		        .collect(Collectors.toList());
-		
-		return overviewList;
+	// Helper method to keep the stream clean
+	private CourseOverviewDTO convertToOverviewDto(Course course) {
+	    return new CourseOverviewDTO(
+	        course.getCourseUniqueId(),
+	        course.getTitle(),
+	        null, // thumbnail
+	        null, // instructor
+	        course.getDifficulty(),
+	        null, // rating
+	        courseEnrollRepo.countByCourseId(course.getId()),
+	        null, // duration
+	        null  // price
+	    );
 	}
 	
 	public List<Course> fetchAllCourses() {
@@ -57,26 +50,36 @@ public class CourseService {
 		return courseRepo.findByDifficulty(difficulty);
 	}
 	
-	public Course fetchCourseByUniqueId(String uniqueId) throws CourseNotFoundException {
+	public List<Course> fetchAllCoursesByTitle(String title) {
+		return courseRepo.findByTitleContainingIgnoreCase(title);
+	}
+	
+	public CourseOverviewDTO fetchCourseByUniqueId(String uniqueId) throws CourseNotFoundException {
 		Optional<Course> courseOpt = courseRepo.findByCourseUniqueId(uniqueId);
 		
 		if(courseOpt.isPresent()) {
-			Course course = courseOpt.get();
-			
-			CourseOverviewDTO courseDto = new CourseOverviewDTO();
-			
-			courseDto.setUniqueId(course.getCourseUniqueId());
-			courseDto.setTitle(course.getTitle());
-			courseDto.setDifficulty(course.getDifficulty());
-			courseDto.setDuration(null);
-			courseDto.setInstructorName(null);
-			courseDto.setPrice(null);
-			courseDto.setRating(null);
-			courseDto.setThumbnailUri(null);
-			courseDto.setTotalStudents(courseEnrollRepo.countByCourseId(course.getId()));
-			
+			return convertToOverviewDto(courseOpt.get());
 		}
 		
 		throw new CourseNotFoundException("Course not found with ID: " + uniqueId);
 	}
+	
+	public List<CourseOverviewDTO> fetchAllCourseOverviewDtos(Difficulty difficulty, String title) {
+	    List<Course> courses;
+
+	    // Logic to determine which repository method to call
+	    if (title != null && !title.isEmpty()) {
+	        courses = fetchAllCoursesByTitle(title);
+	    } else if (difficulty != null) {
+	        courses = fetchAllCoursesByDifficulty(difficulty);
+	    } else {
+	        courses = fetchAllCourses();
+	    }
+
+	    // Centralized mapping logic
+	    return courses.stream()
+	            .map(this::convertToOverviewDto)
+	            .collect(Collectors.toList());
+	}	
+	
 }
