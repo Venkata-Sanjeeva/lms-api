@@ -32,7 +32,12 @@ public class EnrollmentController {
 			Authentication authentication) {
 		try {
 			User user = (User) (authentication.getDetails());
+			if(user == null) {
+				throw new UserNotFoundException("User with not found!");
+			}
+
 			CourseEnrollmentDto enrollDto = enrollService.enrollUserInCourse(user.getUserUniqueId(), null);
+			return ResponseEntity.status(HttpStatus.OK).body(enrollDto);
 		} catch (UserNotFoundException userNotFoundExcep) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(userNotFoundExcep.getMessage());
 		} catch (CourseNotFoundException courseNotFoundExcep) {
