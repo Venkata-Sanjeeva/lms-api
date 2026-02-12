@@ -18,4 +18,8 @@ public interface LessonRepository extends JpaRepository<Lesson, Long>{
     
     @Query("SELECT COUNT(l) FROM Lesson l WHERE l.module.course = :course")
     long countTotalLessonsInCourse(@Param("course") Course course);
+    
+    @Query("SELECT COALESCE(MAX(l.sequenceOrder), 0) FROM Lesson l WHERE l.module.id = :moduleId")
+    Integer findMaxSequenceOrderByModuleId(@Param("moduleId") Long moduleId);
+
 }

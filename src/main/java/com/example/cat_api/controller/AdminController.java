@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.cat_api.exceptions.CourseAlreadyExistsException;
 import com.example.cat_api.request.CreateCourseRequest;
+import com.example.cat_api.request.CreateLessonRequest;
 import com.example.cat_api.request.CreateModuleRequest;
+import com.example.cat_api.response.CreatedLessonResponse;
 import com.example.cat_api.response.CreatedModuleResponse;
 import com.example.cat_api.service.CourseService;
+import com.example.cat_api.service.LessonService;
 import com.example.cat_api.service.ModuleService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class AdminController {
 	
 	private CourseService courseService;
 	private ModuleService moduleService;
+	private LessonService lessonService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> adminDashboard(Authentication authentication) {
@@ -58,5 +62,13 @@ public class AdminController {
         
         // The service handles finding the course and attaching it
         return ResponseEntity.status(201).body(moduleService.addModuleToCourse(courseId, moduleReq));
+    }
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/modules/{moduleId}/lessons")
+    public ResponseEntity<CreatedLessonResponse> createLesson(
+            @PathVariable Long moduleId, 
+            @RequestBody CreateLessonRequest request) {
+        return new ResponseEntity<>(lessonService.addLessonToModule(moduleId, request), HttpStatus.CREATED);
     }
 }
