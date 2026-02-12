@@ -11,6 +11,7 @@ import com.example.cat_api.exceptions.ModuleNotFoundException;
 import com.example.cat_api.request.CreateCourseRequest;
 import com.example.cat_api.request.CreateLessonRequest;
 import com.example.cat_api.request.CreateModuleRequest;
+import com.example.cat_api.response.CreatedCourseResponse;
 import com.example.cat_api.response.CreatedLessonResponse;
 import com.example.cat_api.response.CreatedModuleResponse;
 import com.example.cat_api.service.CourseService;
@@ -25,9 +26,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminController {
 	
-	private CourseService courseService;
-	private ModuleService moduleService;
-	private LessonService lessonService;
+	private final CourseService courseService;
+	private final ModuleService moduleService;
+	private final LessonService lessonService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> adminDashboard(Authentication authentication) {
@@ -47,7 +48,8 @@ public class AdminController {
     @PostMapping("/courses/create")
     public ResponseEntity<?> saveCourseInDB(@RequestBody CreateCourseRequest createCourseReq) {
     	try {
-    		return ResponseEntity.status(HttpStatus.CREATED).body(courseService.saveCourseInDB(createCourseReq));
+    		CreatedCourseResponse response = courseService.saveCourseInDB(createCourseReq);
+    		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (CourseAlreadyExistsException alreadyExistsException) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(alreadyExistsException.getMessage());
 		} catch (Exception excep) {
@@ -56,9 +58,9 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/courses/{courseId}/modules")
+    @PostMapping("/courses/{courseId}/modules/create")
     public ResponseEntity<?> addModuleToCourse(
-        @PathVariable Long courseId, 
+        @PathVariable String courseId, 
         @RequestBody CreateModuleRequest moduleReq) {
     	try {
     		CreatedModuleResponse response = moduleService.addModuleToCourse(courseId, moduleReq);
@@ -72,7 +74,7 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/modules/{moduleId}/lessons")
+    @PostMapping("/modules/{moduleId}/lessons/create")
     public ResponseEntity<?> createLesson(
             @PathVariable Long moduleId, 
             @RequestBody CreateLessonRequest request) {

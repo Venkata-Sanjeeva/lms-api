@@ -17,19 +17,14 @@ import com.example.cat_api.repository.CourseRepository;
 import com.example.cat_api.request.CreateCourseRequest;
 import com.example.cat_api.response.CreatedCourseResponse;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CourseService {
 
-	private CourseRepository courseRepo;
-	private CourseEnrollmentRepository courseEnrollRepo;
-	
-	public CourseService(
-			CourseRepository courseRepo,
-			CourseEnrollmentRepository courseEnrollRepo
-			) {
-		this.courseRepo = courseRepo;
-		this.courseEnrollRepo = courseEnrollRepo;
-	}
+	private final CourseRepository courseRepo;
+	private final CourseEnrollmentRepository courseEnrollRepo;
 	
 	private Difficulty getDifficultyFromString(String difficulty) {
         return switch (difficulty.toUpperCase()) {

@@ -19,9 +19,9 @@ public class ModuleService {
     private final ModuleRepository moduleRepository;
     private final CourseRepository courseRepository;
 
-    public CreatedModuleResponse addModuleToCourse(Long courseId, CreateModuleRequest request) {
+    public CreatedModuleResponse addModuleToCourse(String courseId, CreateModuleRequest request) {
         // 1. Find the parent course
-        Course course = courseRepository.findById(courseId)
+        Course course = courseRepository.findByCourseUniqueId(courseId)
             .orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
         // 2. Create the entity
@@ -31,7 +31,7 @@ public class ModuleService {
 
         // 3. Auto-calculate sequence if not provided
         if (request.getSequenceOrder() == null) {
-            int maxOrder = moduleRepository.findMaxSequenceOrderByCourseId(courseId);
+            int maxOrder = moduleRepository.findMaxSequenceOrderByCourseId(course.getId());
             module.setSequenceOrder(maxOrder + 1);
         } else {
             module.setSequenceOrder(request.getSequenceOrder());
@@ -41,6 +41,7 @@ public class ModuleService {
 
         // 4. Return the DTO
         return CreatedModuleResponse.builder()
+        		.moduleId(savedModule.getId())
                 .title(savedModule.getTitle())
                 .sequenceOrder(savedModule.getSequenceOrder())
                 .courseUniqueId(course.getCourseUniqueId())

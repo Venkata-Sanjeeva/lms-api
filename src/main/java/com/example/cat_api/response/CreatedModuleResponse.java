@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreatedModuleResponse {
+	private Long moduleId;
     private String title;
     private Integer sequenceOrder;
     private String courseUniqueId; // Useful for UI breadcrumbs
