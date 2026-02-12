@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.cat_api.dto.CourseEnrollmentDto;
 import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.exceptions.UserNotFoundException;
-import com.example.cat_api.model.User;
 import com.example.cat_api.service.EnrollmentService;
 
 @RestController
@@ -31,12 +30,8 @@ public class EnrollmentController {
 			@PathVariable String courseUniqueId,
 			Authentication authentication) {
 		try {
-			User user = (User) (authentication.getDetails());
-			if(user == null) {
-				throw new UserNotFoundException("User with not found!");
-			}
-
-			CourseEnrollmentDto enrollDto = enrollService.enrollUserInCourse(user.getUserUniqueId(), null);
+			CourseEnrollmentDto enrollDto = enrollService.enrollUserInCourse(authentication.getName(), courseUniqueId);
+			
 			return ResponseEntity.status(HttpStatus.OK).body(enrollDto);
 		} catch (UserNotFoundException userNotFoundExcep) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(userNotFoundExcep.getMessage());

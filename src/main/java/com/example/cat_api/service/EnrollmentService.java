@@ -26,9 +26,9 @@ public class EnrollmentService {
 		this.courseEnrollRepo = courseEnrollRepo;
 	}
 	
-	public CourseEnrollmentDto enrollUserInCourse(String userUniqueId, String courseUniqueId) throws UserNotFoundException, CourseNotFoundException {
+	public CourseEnrollmentDto enrollUserInCourse(String userEmailId, String courseUniqueId) throws UserNotFoundException, CourseNotFoundException {
 	    // 1. Validate User and Course existence
-	    User user = userService.getUserByUniqueId(userUniqueId);
+	    User user = userService.getUserByEmail(userEmailId);
 	    Course course = courseService.fetchCourseByUniqueId(courseUniqueId);
 
 	    // 2. Create and Save Enrollment
