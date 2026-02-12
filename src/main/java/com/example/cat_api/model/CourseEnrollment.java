@@ -21,6 +21,9 @@ public class CourseEnrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String courseEnrollUniqueId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CourseEnrollmentStatus status; // Simplified name
