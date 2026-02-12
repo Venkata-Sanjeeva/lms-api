@@ -1,5 +1,6 @@
 package com.example.cat_api.service;
 
+import com.example.cat_api.model.Resource;
 import com.example.cat_api.utils.IdentifierGenerator;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,8 @@ import com.example.cat_api.request.CreateLessonRequest;
 import com.example.cat_api.response.CreatedLessonResponse;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +44,24 @@ public class LessonService {
             lesson.setSequenceOrder(request.getSequenceOrder());
         }
 
+        // 4. Add Resources
+        if (request.getResourcesList() != null && !request.getResourcesList().isEmpty()) {
+            List<Resource> resources = request.getResourcesList().stream()
+                    .map(resourceRequest -> {
+                        Resource resource = new Resource();
+                        resource.setResourceType(resourceRequest.getType()); // enum value
+                        resource.setFileUrl(resourceRequest.getFileUrl());
+                        resource.setLesson(lesson);
+                        return resource;
+                    })
+                    .toList();
+
+            lesson.getResourceList().addAll(resources);
+        }
+
         Lesson savedLesson = lessonRepository.save(lesson);
 
-        // 4. Return DTO
+        // 5. Return DTO
         return CreatedLessonResponse.builder()
                 .id(savedLesson.getLessonUniqueId())
                 .title(savedLesson.getTitle())
