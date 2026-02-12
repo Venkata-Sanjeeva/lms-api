@@ -1,10 +1,16 @@
 package com.example.cat_api.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.example.cat_api.model.Lesson;
+import com.example.cat_api.model.Module;
+import com.example.cat_api.response.CoursePublicResponse;
+import com.example.cat_api.response.LessonResponse;
+import com.example.cat_api.response.ModuleResponse;
 import org.springframework.stereotype.Service;
 
 import com.example.cat_api.dto.CourseOverviewDTO;
@@ -61,8 +67,8 @@ public class CourseService {
 		return courseRepo.findByTitleContainingIgnoreCase(title);
 	}
 	
-	public CourseOverviewDTO fetchCourseByUniqueIdAndConvertToDto(String uniqueId) throws CourseNotFoundException {
-		return convertToOverviewDto(fetchCourseByUniqueId(uniqueId));
+	public CoursePublicResponse fetchCourseByUniqueIdAndConvertToDto(String uniqueId) throws CourseNotFoundException {
+		return mapToPublicResponse(fetchCourseByUniqueId(uniqueId));
 	}
 	
 	public Course fetchCourseByUniqueId(String uniqueId) {
@@ -75,7 +81,7 @@ public class CourseService {
 		throw new CourseNotFoundException("Course not found with ID: " + uniqueId);
 	}
 	
-	public List<CourseOverviewDTO> fetchAllCourseOverviewDtos(Difficulty difficulty, String title) {
+	public List<CoursePublicResponse> fetchAllCourseOverviewDtos(Difficulty difficulty, String title) {
 	    List<Course> courses;
 
 	    boolean hasTitle = (title != null && !title.isEmpty());
@@ -99,7 +105,7 @@ public class CourseService {
 	    }
 
 	    return courses.stream()
-	            .map(this::convertToOverviewDto)
+	            .map(this::mapToPublicResponse)
 	            .collect(Collectors.toList());
 	}
 	
@@ -132,6 +138,33 @@ public class CourseService {
 					savedCourse.getLanguage(),
 					savedCourse.getCreatedAt()
 				);
+	}
+
+	private CoursePublicResponse mapToPublicResponse(Course course) {
+		return CoursePublicResponse.builder()
+				.courseUniqueId(course.getCourseUniqueId())
+				.title(course.getTitle())
+				.description(course.getDescription())
+				.difficulty(course.getDifficulty().toString())
+				.language(course.getLanguage())
+				.enrollStudentsCount(courseEnrollRepo.countByCourseId(course.getId()))
+				.modules(course.getModuleList().stream()
+						.sorted(Comparator.comparing(Module::getSequenceOrder))
+						.map(module -> ModuleResponse.builder()
+								.id(module.getId())
+								.title(module.getTitle())
+								.sequenceOrder(module.getSequenceOrder())
+								.lessons(module.getLessons().stream()
+										.sorted(Comparator.comparing(Lesson::getSequenceOrder))
+										.map(lesson -> LessonResponse.builder()
+												.id(lesson.getId())
+												.title(lesson.getTitle())
+												.sequenceOrder(lesson.getSequenceOrder())
+												.build())
+										.toList())
+								.build())
+						.toList())
+				.build();
 	}
 	
 }
