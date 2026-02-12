@@ -8,18 +8,21 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.cat_api.exceptions.CourseAlreadyExistsException;
 import com.example.cat_api.request.CreateCourseRequest;
+import com.example.cat_api.request.CreateModuleRequest;
+import com.example.cat_api.response.CreatedModuleResponse;
 import com.example.cat_api.service.CourseService;
+import com.example.cat_api.service.ModuleService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class AdminController {
 	
 	private CourseService courseService;
-	
-	public AdminController(CourseService courseService) {
-		this.courseService = courseService;
-	}
+	private ModuleService moduleService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> adminDashboard(Authentication authentication) {
@@ -45,5 +48,15 @@ public class AdminController {
 		} catch (Exception excep) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(excep.getMessage());
 		}
+    }
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/courses/{courseId}/modules")
+    public ResponseEntity<CreatedModuleResponse> addModuleToCourse(
+        @PathVariable Long courseId, 
+        @RequestBody CreateModuleRequest moduleReq) {
+        
+        // The service handles finding the course and attaching it
+        return ResponseEntity.status(201).body(moduleService.addModuleToCourse(courseId, moduleReq));
     }
 }
