@@ -18,8 +18,11 @@ public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private Long id;
+
+    @Column(nullable = false, unique = true)
+    @EqualsAndHashCode.Include
+    private String lessonUniqueId;
 
     @Column(nullable = false)
     private String title;

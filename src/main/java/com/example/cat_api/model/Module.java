@@ -18,8 +18,11 @@ public class Module {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private Long id;
+
+    @Column(nullable = false, unique = true)
+    @EqualsAndHashCode.Include
+    private String moduleUniqueId;
 
     @Column(nullable = false)
     private String title;

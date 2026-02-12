@@ -1,6 +1,7 @@
 package com.example.cat_api.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +16,9 @@ public interface ModuleRepository extends JpaRepository<Module, Long>{
     
     // Alternative using course ID
     List<Module> findByCourseIdOrderBySequenceOrderAsc(Long courseId);
-    
+
+    Optional<Module> findByModuleUniqueId(String moduleUniqueId);
+
     @Query("SELECT COALESCE(MAX(m.sequenceOrder), 0) FROM Module m WHERE m.course.id = :courseId")
     Integer findMaxSequenceOrderByCourseId(@Param("courseId") Long courseId);
 }

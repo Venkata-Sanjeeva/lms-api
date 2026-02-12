@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 @Builder
 public class CreatedLessonResponse{
-    private Long id;
+    private String id;
     private String title;
     private String content;
     private String codeExample;
     private Integer sequenceOrder;
-    private Long moduleId;
+    private String moduleId;
 }

@@ -1,5 +1,6 @@
 package com.example.cat_api.controller;
 
+import com.example.cat_api.exceptions.CourseNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,8 +66,8 @@ public class AdminController {
     	try {
     		CreatedModuleResponse response = moduleService.addModuleToCourse(courseId, moduleReq);
     		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-		} catch (ModuleNotFoundException moduleNotFoundExcep) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(moduleNotFoundExcep.getMessage());
+		} catch (ModuleNotFoundException | CourseNotFoundException notFoundExcept) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving module!");
 		}
@@ -74,13 +75,13 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/modules/{moduleId}/lessons/create")
+    @PostMapping("/modules/{moduleUniqueId}/lessons/create")
     public ResponseEntity<?> createLesson(
-            @PathVariable Long moduleId, 
+            @PathVariable String moduleUniqueId,
             @RequestBody CreateLessonRequest request) {
     	
     	try {
-			CreatedLessonResponse response = lessonService.addLessonToModule(moduleId, request);
+			CreatedLessonResponse response = lessonService.addLessonToModule(moduleUniqueId, request);
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (ModuleNotFoundException moduleNotFoundExcep) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(moduleNotFoundExcep.getMessage());

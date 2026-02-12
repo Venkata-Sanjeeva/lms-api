@@ -3,7 +3,6 @@ package com.example.cat_api.service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.example.cat_api.model.Lesson;
@@ -11,6 +10,7 @@ import com.example.cat_api.model.Module;
 import com.example.cat_api.response.CoursePublicResponse;
 import com.example.cat_api.response.LessonResponse;
 import com.example.cat_api.response.ModuleResponse;
+import com.example.cat_api.utils.IdentifierGenerator;
 import org.springframework.stereotype.Service;
 
 import com.example.cat_api.dto.CourseOverviewDTO;
@@ -122,7 +122,7 @@ public class CourseService {
 
 		Course newCourse = new Course();
 		
-		newCourse.setCourseUniqueId("COURSE-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+		newCourse.setCourseUniqueId(IdentifierGenerator.generate("CRS"));
 		newCourse.setTitle(courseTitle);
 		newCourse.setDescription(courseDesc);
 		newCourse.setLanguage(courseLang);

@@ -1,5 +1,6 @@
 package com.example.cat_api.service;
 
+import com.example.cat_api.utils.IdentifierGenerator;
 import org.springframework.stereotype.Service;
 
 import com.example.cat_api.exceptions.CourseNotFoundException;
@@ -26,6 +27,7 @@ public class ModuleService {
 
         // 2. Create the entity
         Module module = new Module();
+        module.setModuleUniqueId(IdentifierGenerator.generate("MOD"));
         module.setTitle(request.getTitle());
         module.setCourse(course);
 
@@ -41,7 +43,7 @@ public class ModuleService {
 
         // 4. Return the DTO
         return CreatedModuleResponse.builder()
-        		.moduleId(savedModule.getId())
+        		.moduleId(savedModule.getModuleUniqueId())
                 .title(savedModule.getTitle())
                 .sequenceOrder(savedModule.getSequenceOrder())
                 .courseUniqueId(course.getCourseUniqueId())

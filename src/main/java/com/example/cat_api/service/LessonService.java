@@ -1,5 +1,6 @@
 package com.example.cat_api.service;
 
+import com.example.cat_api.utils.IdentifierGenerator;
 import org.springframework.stereotype.Service;
 
 import com.example.cat_api.exceptions.ModuleNotFoundException;
@@ -19,13 +20,14 @@ public class LessonService {
     private final LessonRepository lessonRepository;
     private final ModuleRepository moduleRepository;
 
-    public CreatedLessonResponse addLessonToModule(Long moduleId, CreateLessonRequest request) {
+    public CreatedLessonResponse addLessonToModule(String moduleUniqueId, CreateLessonRequest request) {
         // 1. Verify Module exists
-        Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new ModuleNotFoundException("Module not found with id: " + moduleId));
+        Module module = moduleRepository.findByModuleUniqueId(moduleUniqueId)
+                .orElseThrow(() -> new ModuleNotFoundException("Module not found with id: " + moduleUniqueId));
 
         // 2. Create Lesson Entity
         Lesson lesson = new Lesson();
+        lesson.setLessonUniqueId(IdentifierGenerator.generate("LSN"));
         lesson.setTitle(request.getTitle());
         lesson.setContent(request.getContent());
         lesson.setCodeExample(request.getCodeExample());
@@ -33,7 +35,7 @@ public class LessonService {
 
         // 3. Logic: Auto-increment sequenceOrder
         if (request.getSequenceOrder() == null) {
-            int maxOrder = lessonRepository.findMaxSequenceOrderByModuleId(moduleId);
+            int maxOrder = lessonRepository.findMaxSequenceOrderByModuleId(module.getId());
             lesson.setSequenceOrder(maxOrder + 1);
         } else {
             lesson.setSequenceOrder(request.getSequenceOrder());
@@ -43,12 +45,12 @@ public class LessonService {
 
         // 4. Return DTO
         return CreatedLessonResponse.builder()
-                .id(savedLesson.getId())
+                .id(savedLesson.getLessonUniqueId())
                 .title(savedLesson.getTitle())
                 .content(savedLesson.getContent())
                 .codeExample(savedLesson.getCodeExample())
                 .sequenceOrder(savedLesson.getSequenceOrder())
-                .moduleId(module.getId())
+                .moduleId(module.getModuleUniqueId())
                 .build();
     }
 }
