@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.cat_api.exceptions.CourseAlreadyExistsException;
+import com.example.cat_api.exceptions.ModuleNotFoundException;
 import com.example.cat_api.request.CreateCourseRequest;
 import com.example.cat_api.request.CreateLessonRequest;
 import com.example.cat_api.request.CreateModuleRequest;
@@ -56,19 +57,33 @@ public class AdminController {
     
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/courses/{courseId}/modules")
-    public ResponseEntity<CreatedModuleResponse> addModuleToCourse(
+    public ResponseEntity<?> addModuleToCourse(
         @PathVariable Long courseId, 
         @RequestBody CreateModuleRequest moduleReq) {
+    	try {
+    		CreatedModuleResponse response = moduleService.addModuleToCourse(courseId, moduleReq);
+    		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		} catch (ModuleNotFoundException moduleNotFoundExcep) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(moduleNotFoundExcep.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving module!");
+		}
         
-        // The service handles finding the course and attaching it
-        return ResponseEntity.status(201).body(moduleService.addModuleToCourse(courseId, moduleReq));
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/modules/{moduleId}/lessons")
-    public ResponseEntity<CreatedLessonResponse> createLesson(
+    public ResponseEntity<?> createLesson(
             @PathVariable Long moduleId, 
             @RequestBody CreateLessonRequest request) {
-        return new ResponseEntity<>(lessonService.addLessonToModule(moduleId, request), HttpStatus.CREATED);
+    	
+    	try {
+			CreatedLessonResponse response = lessonService.addLessonToModule(moduleId, request);
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		} catch (ModuleNotFoundException moduleNotFoundExcep) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(moduleNotFoundExcep.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving lesson!");
+		}
     }
 }
