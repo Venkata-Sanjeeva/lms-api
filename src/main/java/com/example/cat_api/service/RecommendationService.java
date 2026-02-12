@@ -1,5 +1,6 @@
 package com.example.cat_api.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -19,15 +20,17 @@ public class RecommendationService {
     }
 
     public List<Course> suggestCourses(RecommendationRequest request) {
-        // Simple Logic: Find courses matching the goal in the title/description 
-        // AND matching the difficulty level.
+        if (request == null) {
+            return Collections.emptyList();
+        }
+
+        // Default values to prevent NPEs
+        String goal = request.getGoal() != null ? request.getGoal() : "";
+        String exp = request.getExperience() != null ? request.getExperience() : "BEGINNER";
         
-        Difficulty difficulty = mapExperienceToDifficulty(request.getExperience());
+        Difficulty difficulty = mapExperienceToDifficulty(exp);
         
-        return courseRepository.findByTitleContainingIgnoreCaseAndDifficulty(
-            request.getGoal(), 
-            difficulty
-        );
+        return courseRepository.findByTitleContainingIgnoreCaseAndDifficulty(goal, difficulty);
     }
 
     private Difficulty mapExperienceToDifficulty(String experience) {
