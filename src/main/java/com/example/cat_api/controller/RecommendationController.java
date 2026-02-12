@@ -2,6 +2,7 @@ package com.example.cat_api.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ public class RecommendationController {
     }
 
     @PostMapping("/suggest")
-    public ResponseEntity<List<Course>> getSuggestions(@RequestBody RecommendationRequest request) {
-        return ResponseEntity.ok(recommendationService.suggestCourses(request));
+    public ResponseEntity<?> getSuggestions(@RequestBody RecommendationRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(recommendationService.suggestCourses(request));
     }
 }
