@@ -34,11 +34,11 @@ public class CourseController {
         		.body(courseService.fetchAllCourseOverviewDtos(difficulty, title));
     }
 	
-	@GetMapping("/{courseUniqueId}")
-	public ResponseEntity<?> getCourseDetails(@PathVariable String courseUniqueId) {
+	@GetMapping("/{courseUID}/details")
+	public ResponseEntity<?> getCourseDetails(@PathVariable String courseUID) {
 		CoursePublicResponse response;
 		try {
-			response = courseService.fetchCourseByUniqueIdAndConvertToDto(courseUniqueId);
+			response = courseService.fetchCourseByUIDAndConvertToDto(courseUID);
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (CourseNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

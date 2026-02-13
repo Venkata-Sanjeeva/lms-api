@@ -43,7 +43,7 @@ public class CourseService {
 	// Helper method to keep the stream clean
 	private CourseOverviewDTO convertToOverviewDto(Course course) {
 	    return new CourseOverviewDTO(
-	        course.getCourseUniqueId(),
+	        course.getCourseUID(),
 	        course.getTitle(),
 	        null, // thumbnail
 	        null, // instructor
@@ -67,18 +67,18 @@ public class CourseService {
 		return courseRepo.findByTitleContainingIgnoreCase(title);
 	}
 	
-	public CoursePublicResponse fetchCourseByUniqueIdAndConvertToDto(String uniqueId) throws CourseNotFoundException {
-		return mapToPublicResponse(fetchCourseByUniqueId(uniqueId));
+	public CoursePublicResponse fetchCourseByUIDAndConvertToDto(String uid) throws CourseNotFoundException {
+		return mapToPublicResponse(fetchCourseByUID(uid));
 	}
 	
-	public Course fetchCourseByUniqueId(String uniqueId) {
-		Optional<Course> courseOpt = courseRepo.findByCourseUniqueId(uniqueId);
+	public Course fetchCourseByUID(String uid) {
+		Optional<Course> courseOpt = courseRepo.findByCourseUID(uid);
 		
 		if(courseOpt.isPresent()) {
 			return courseOpt.get();
 		}
-		
-		throw new CourseNotFoundException("Course not found with ID: " + uniqueId);
+
+		throw new CourseNotFoundException("Course not found with ID: " + uid);
 	}
 	
 	public List<CoursePublicResponse> fetchAllCourseOverviewDtos(Difficulty difficulty, String title) {
@@ -122,7 +122,7 @@ public class CourseService {
 
 		Course newCourse = new Course();
 		
-		newCourse.setCourseUniqueId(IdentifierGenerator.generate("CRS"));
+		newCourse.setCourseUID(IdentifierGenerator.generate("CRS"));
 		newCourse.setTitle(courseTitle);
 		newCourse.setDescription(courseDesc);
 		newCourse.setLanguage(courseLang);
@@ -131,7 +131,7 @@ public class CourseService {
 		Course savedCourse = courseRepo.save(newCourse);
 		
 		return new CreatedCourseResponse(
-					savedCourse.getCourseUniqueId(),
+					savedCourse.getCourseUID(),
 					savedCourse.getTitle(),
 					savedCourse.getDescription(),
 					savedCourse.getDifficulty().toString(),
@@ -142,7 +142,7 @@ public class CourseService {
 
 	private CoursePublicResponse mapToPublicResponse(Course course) {
 		return CoursePublicResponse.builder()
-				.courseUniqueId(course.getCourseUniqueId())
+				.courseUID(course.getCourseUID())
 				.title(course.getTitle())
 				.description(course.getDescription())
 				.difficulty(course.getDifficulty().toString())

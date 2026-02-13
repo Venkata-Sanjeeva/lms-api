@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CoursePublicResponse {
-    private String courseUniqueId;
+    private String courseUID;
     private String title;
     private String description;
     private String difficulty;

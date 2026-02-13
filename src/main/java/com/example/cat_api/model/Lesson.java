@@ -22,7 +22,7 @@ public class Lesson {
 
     @Column(nullable = false, unique = true)
     @EqualsAndHashCode.Include
-    private String lessonUniqueId;
+    private String lessonUID; // Unique identifier for the lesson
 
     @Column(nullable = false)
     private String title;

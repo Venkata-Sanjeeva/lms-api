@@ -6,10 +6,10 @@ import com.example.cat_api.exceptions.InvalidLoginCredentialsException;
 import com.example.cat_api.exceptions.UserNotFoundException;
 import com.example.cat_api.model.User;
 import com.example.cat_api.repository.UserRepository;
+import com.example.cat_api.utils.IdentifierGenerator;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class RegisterAndLoginService {
@@ -34,16 +34,16 @@ public class RegisterAndLoginService {
 
         User user = new User();
         
-        String uniqueIdRole = role.toUpperCase();
-        
-        user.setUserUniqueId(uniqueIdRole + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        String roleUC = role.toUpperCase();
+
+        user.setUserUID(IdentifierGenerator.generate(roleUC));
         user.setName(name);
         user.setEmail(email);
 
         // ✅ Hash password using Argon2
         user.setPasswordHash(passwordEncoder.encode(password));
 
-        if(uniqueIdRole.equals("USER")) {
+        if(roleUC.equals("USER")) {
         	user.setRole(Roles.USER);
         } else {
         	user.setRole(Roles.ADMIN);

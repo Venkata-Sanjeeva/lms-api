@@ -17,7 +17,7 @@ public interface ModuleRepository extends JpaRepository<Module, Long>{
     // Alternative using course ID
     List<Module> findByCourseIdOrderBySequenceOrderAsc(Long courseId);
 
-    Optional<Module> findByModuleUniqueId(String moduleUniqueId);
+    Optional<Module> findByModuleUID(String moduleUID);
 
     @Query("SELECT COALESCE(MAX(m.sequenceOrder), 0) FROM Module m WHERE m.course.id = :courseId")
     Integer findMaxSequenceOrderByCourseId(@Param("courseId") Long courseId);

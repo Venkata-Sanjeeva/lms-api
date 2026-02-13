@@ -61,7 +61,7 @@ public class RecommendationService {
                 .filter(sc -> sc.score() > 10)
                 .sorted(Comparator.comparingDouble(ScoredCourse::score).reversed())
                 .map(sc -> new CourseRecommendationResponse(
-                        sc.course().getCourseUniqueId(),
+                        sc.course().getCourseUID(),
                         sc.course().getTitle(),
                         sc.course().getDescription(),
                         sc.course().getDifficulty(),

@@ -49,13 +49,13 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @PostMapping("/courses/{courseUniqueId}/enroll")
+    @PostMapping("/courses/{courseUID}/enroll")
     public ResponseEntity<?> enrollUserInCourse(
-            @PathVariable String courseUniqueId,
+            @PathVariable String courseUID,
             Authentication authentication
     ) {
         try {
-            CourseEnrollResponse response = courseEnrollService.enrollUserInSelectedCourse(authentication.getName(), courseUniqueId);
+            CourseEnrollResponse response = courseEnrollService.enrollUserInSelectedCourse(authentication.getName(), courseUID);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (UserAlreadyEnrolledException alreadyEnrolledExcept) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(alreadyEnrolledExcept.getMessage());

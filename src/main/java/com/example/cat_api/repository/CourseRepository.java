@@ -10,7 +10,7 @@ import com.example.cat_api.enums.Difficulty;
 import com.example.cat_api.model.Course;
 
 public interface CourseRepository extends JpaRepository<Course, Long>{
-	Optional<Course> findByCourseUniqueId(String courseUniqueId);
+	Optional<Course> findByCourseUID(String courseUID);
 	
 	boolean existsByDifficultyAndTitleContainingIgnoreCase(Difficulty difficulty, String title);
     

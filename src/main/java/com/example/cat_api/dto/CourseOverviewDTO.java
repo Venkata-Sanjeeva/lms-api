@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CourseOverviewDTO {
-    private String uniqueId;
+    private String UID;
     private String title;
     private String thumbnailUri;
     private String instructorName;

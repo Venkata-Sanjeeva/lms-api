@@ -16,7 +16,7 @@ public interface LessonRepository extends JpaRepository<Lesson, Long>{
     // Helpful for finding the next lesson in a module
     Optional<Lesson> findByModuleAndSequenceOrder(Module module, Integer sequenceOrder);
 
-    Optional<Lesson> findByLessonUniqueId(String lessonUniqueId);
+    Optional<Lesson> findByLessonUID(String lessonUID);
 
     @Query("SELECT COUNT(l) FROM Lesson l WHERE l.module.course = :course")
     long countTotalLessonsInCourse(@Param("course") Course course);

@@ -14,8 +14,8 @@ public class UserService {
         this.userRepo = userRepo;
     }
     
-    public User getUserByUniqueId(String uniqueId) {
-    	return userRepo.findByUserUniqueId(uniqueId).orElseThrow(() -> new UserNotFoundException("User with " + uniqueId + " not found!"));
+    public User getUserByUID(String UID) {
+    	return userRepo.findByUserUID(UID).orElseThrow(() -> new UserNotFoundException("User with " + UID + " not found!"));
     }
 
     public User getUserByEmail(String email) {

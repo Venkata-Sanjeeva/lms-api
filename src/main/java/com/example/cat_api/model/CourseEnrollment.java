@@ -22,7 +22,7 @@ public class CourseEnrollment {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String courseEnrollUniqueId;
+    private String courseEnrollUID; // Unique identifier for enrollment
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

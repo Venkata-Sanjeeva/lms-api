@@ -15,9 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CourseEnrollmentDto {
 
-	private String courseUniqueId;
+	private String courseUID;
     private String courseTitle;
-    private String userUniqueId;
+    private String userUID;
     private CourseEnrollmentStatus status;
     private LocalDateTime enrolledAt;
     

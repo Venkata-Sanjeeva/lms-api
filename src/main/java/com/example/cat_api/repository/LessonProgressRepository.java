@@ -10,21 +10,21 @@ import com.example.cat_api.model.LessonProgress;
 
 public interface LessonProgressRepository extends JpaRepository<LessonProgress, Long> {
 
-    // JPA will look into 'user.userUniqueId' and 'lesson.lessonUniqueId'
-    Optional<LessonProgress> findByUser_UserUniqueIdAndLesson_LessonUniqueId(
-        String userUid, 
-        String lessonUid
+    // JPA will look into 'user.userUID' and 'lesson.lessonUID'
+    Optional<LessonProgress> findByUser_UserUIDAndLesson_LessonUID(
+        String userUID, 
+        String lessonUID
     );
 
     // Get count using the String Course Unique ID
     @Query("SELECT COUNT(lp) FROM LessonProgress lp " +
            "JOIN lp.lesson l " +
            "JOIN l.module m " +
-           "WHERE lp.user.userUniqueId = :userUid " +
-           "AND m.course.courseUniqueId = :courseUid " +
+           "WHERE lp.user.userUID = :userUID " +
+           "AND m.course.courseUID = :courseUID " +
            "AND lp.isCompleted = true")
-    long countCompletedByUniqueIds(
-        @Param("userUid") String userUid, 
-        @Param("courseUid") String courseUid
+    long countCompletedByUIDs(
+        @Param("userUID") String userUID, 
+        @Param("courseUID") String courseUID
     );
 }

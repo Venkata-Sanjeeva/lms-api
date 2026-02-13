@@ -21,7 +21,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String userUniqueId;
+    private String userUID; // Unique identifier for the user
 
     @Column(nullable = false)
     private String name;

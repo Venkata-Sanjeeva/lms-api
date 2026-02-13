@@ -26,10 +26,10 @@ public class EnrollmentService {
 		this.courseEnrollRepo = courseEnrollRepo;
 	}
 	
-	public CourseEnrollmentDto enrollUserInCourse(String userEmailId, String courseUniqueId) throws UserNotFoundException, CourseNotFoundException {
+	public CourseEnrollmentDto enrollUserInCourse(String userEmailId, String courseUID) throws UserNotFoundException, CourseNotFoundException {
 	    // 1. Validate User and Course existence
 	    User user = userService.getUserByEmail(userEmailId);
-	    Course course = courseService.fetchCourseByUniqueId(courseUniqueId);
+	    Course course = courseService.fetchCourseByUID(courseUID);
 
 	    // 2. Create and Save Enrollment
 	    CourseEnrollment enrollment = new CourseEnrollment();
@@ -39,9 +39,9 @@ public class EnrollmentService {
 
 	    // 3. Map to Response DTO
 	    return new CourseEnrollmentDto(
-	        course.getCourseUniqueId(),
+	        course.getCourseUID(),
 	        course.getTitle(),
-	        user.getUserUniqueId(),
+	        user.getUserUID(),
 	        enrollment.getStatus(),
 	        enrollment.getEnrolledAt()
 	    );

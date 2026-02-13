@@ -13,6 +13,6 @@ public class CreatedModuleResponse {
 	private String moduleId;
     private String title;
     private Integer sequenceOrder;
-    private String courseUniqueId; // Useful for UI breadcrumbs
+    private String courseUID; // Useful for UI breadcrumbs
     private int lessonCount;       // Nice to have for the dashboard
 }

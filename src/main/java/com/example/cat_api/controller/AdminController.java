@@ -59,12 +59,12 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{courseId}/modules/create")
+    @PostMapping("/{courseUID}/modules/create")
     public ResponseEntity<?> addModuleToCourse(
-        @PathVariable String courseId, 
+        @PathVariable String courseUID, 
         @RequestBody CreateModuleRequest moduleReq) {
     	try {
-    		CreatedModuleResponse response = moduleService.addModuleToCourse(courseId, moduleReq);
+    		CreatedModuleResponse response = moduleService.addModuleToCourse(courseUID, moduleReq);
     		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (ModuleNotFoundException | CourseNotFoundException notFoundExcept) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
@@ -75,13 +75,13 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{moduleUniqueId}/lessons/create")
+    @PostMapping("/{moduleUID}/lessons/create")
     public ResponseEntity<?> createLesson(
-            @PathVariable String moduleUniqueId,
+            @PathVariable String moduleUID,
             @RequestBody CreateLessonRequest request) {
     	
     	try {
-			CreatedLessonResponse response = lessonService.addLessonToModule(moduleUniqueId, request);
+			CreatedLessonResponse response = lessonService.addLessonToModule(moduleUID, request);
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (ModuleNotFoundException moduleNotFoundExcep) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(moduleNotFoundExcep.getMessage());

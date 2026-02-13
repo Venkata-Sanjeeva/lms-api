@@ -30,11 +30,11 @@ public class LessonProgressService {
     public LessonProgressResponse updateProgress(String userEmailID, UpdateProgressRequest request) throws UserNotFoundException, CourseNotFoundException, LessonNotFoundException, UserNotEnrolledException {
     	User user = userService.getUserByEmail(userEmailID);
     	
-    	if (!courseEnrollSevice.existsByUserUIDAndCourseUID(user.getUserUniqueId(), request.getCourseUID())) {
+    	if (!courseEnrollSevice.existsByUserUIDAndCourseUID(user.getUserUID(), request.getCourseUID())) {
     	    throw new UserNotEnrolledException("User with email ID: " + userEmailID + " not enrolled in course with ID: " + request.getCourseUID());
     	}
     	
-    	LessonProgress progress = lessonProgressRepo.findByUser_UserUniqueIdAndLesson_LessonUniqueId(user.getUserUniqueId(), request.getLessonUID())
+    	LessonProgress progress = lessonProgressRepo.findByUser_UserUIDAndLesson_LessonUID(user.getUserUID(), request.getLessonUID())
     			.orElseGet(() -> {
 			        // ONLY fetch these if we are creating a NEW progress record
 			        LessonProgress newProgress = new LessonProgress();
@@ -50,7 +50,7 @@ public class LessonProgressService {
 
         return LessonProgressResponse.builder()
                 .id(saved.getId())
-                .lessonUID(saved.getLesson().getLessonUniqueId())
+                .lessonUID(saved.getLesson().getLessonUID())
                 .lessonTitle(saved.getLesson().getTitle())
                 .isCompleted(saved.isCompleted())
                 .completedAt(saved.getCompletedAt())

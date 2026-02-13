@@ -25,12 +25,12 @@ public class EnrollmentController {
 		this.enrollService = enrollService;
 	}
 	
-	@PostMapping("/{courseUniqueId}")
+	@PostMapping("/{courseUID}")
 	public ResponseEntity<?> enrollUser(
-			@PathVariable String courseUniqueId,
+			@PathVariable String courseUID,
 			Authentication authentication) {
 		try {
-			CourseEnrollmentDto enrollDto = enrollService.enrollUserInCourse(authentication.getName(), courseUniqueId);
+			CourseEnrollmentDto enrollDto = enrollService.enrollUserInCourse(authentication.getName(), courseUID);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(enrollDto);
 		} catch (UserNotFoundException userNotFoundExcep) {

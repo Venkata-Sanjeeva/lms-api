@@ -21,16 +21,16 @@ public class CourseEnrollService {
     private final UserService userService;
     private final CourseService courseService;
 
-    public CourseEnrollResponse enrollUserInSelectedCourse(String userEmailId, String courseUniqueId) throws UserNotFoundException,
+    public CourseEnrollResponse enrollUserInSelectedCourse(String userEmailId, String courseUID) throws UserNotFoundException,
             CourseNotFoundException,
             UserAlreadyEnrolledException {
         User user = userService.getUserByEmail(userEmailId);
-        Course course = courseService.fetchCourseByUniqueId(courseUniqueId);
+        Course course = courseService.fetchCourseByUID(courseUID);
 
         courseEnrollRepo.findByUserAndCourse(user, course)
                 .ifPresent(enrollment -> {
                     throw new UserAlreadyEnrolledException(
-                            "User is already enrolled in course: " + courseUniqueId
+                            "User is already enrolled in course: " + courseUID
                     );
                 });
 
@@ -38,17 +38,17 @@ public class CourseEnrollService {
 
         courseEnrollment.setUser(user);
         courseEnrollment.setCourse(course);
-        courseEnrollment.setCourseEnrollUniqueId(IdentifierGenerator.generate("ENR"));
+        courseEnrollment.setCourseEnrollUID(IdentifierGenerator.generate("ENR"));
 
         CourseEnrollment savedCourseEnroll = courseEnrollRepo.save(courseEnrollment);
 
         return CourseEnrollResponse.builder()
-                .courseId(courseUniqueId)
+                .courseId(courseUID)
                 .courseTitle(course.getTitle())
-                .enrollmentId(savedCourseEnroll.getCourseEnrollUniqueId())
+                .enrollmentId(savedCourseEnroll.getCourseEnrollUID())
                 .enrolledAt(savedCourseEnroll.getEnrolledAt())
                 .status(savedCourseEnroll.getStatus())
-                .userId(user.getUserUniqueId())
+                .userId(user.getUserUID())
                 .userName(user.getName())
                 .userEmail(userEmailId)
                 .build();
@@ -56,11 +56,11 @@ public class CourseEnrollService {
 
     public CourseEnrollment fetchByUserUIDandCourseUID(String userUID, String courseUID) throws UserNotFoundException, CourseNotFoundException, UserNotEnrolledException {
     	return courseEnrollRepo
-    			.findByUser_UserUniqueIdAndCourse_CourseUniqueId(userUID, courseUID)
+    			.findByUser_UserUIDAndCourse_CourseUID(userUID, courseUID)
     			.orElseThrow(() -> new UserNotEnrolledException("User with ID: " + userUID + " not enrolled in course with ID: " + courseUID));
     }
     
     public boolean existsByUserUIDAndCourseUID(String userUID, String courseUID) {
-    	return courseEnrollRepo.existsByUser_UserUniqueIdAndCourse_CourseUniqueId(userUID, courseUID);
+    	return courseEnrollRepo.existsByUser_UserUIDAndCourse_CourseUID(userUID, courseUID);
     }
 }

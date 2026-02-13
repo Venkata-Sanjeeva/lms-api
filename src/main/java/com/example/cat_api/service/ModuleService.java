@@ -22,12 +22,12 @@ public class ModuleService {
 
     public CreatedModuleResponse addModuleToCourse(String courseId, CreateModuleRequest request) {
         // 1. Find the parent course
-        Course course = courseRepository.findByCourseUniqueId(courseId)
+        Course course = courseRepository.findByCourseUID(courseId)
             .orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
         // 2. Create the entity
         Module module = new Module();
-        module.setModuleUniqueId(IdentifierGenerator.generate("MOD"));
+        module.setModuleUID(IdentifierGenerator.generate("MOD"));
         module.setTitle(request.getTitle());
         module.setCourse(course);
 
@@ -43,10 +43,10 @@ public class ModuleService {
 
         // 4. Return the DTO
         return CreatedModuleResponse.builder()
-        		.moduleId(savedModule.getModuleUniqueId())
+        		.moduleId(savedModule.getModuleUID())
                 .title(savedModule.getTitle())
                 .sequenceOrder(savedModule.getSequenceOrder())
-                .courseUniqueId(course.getCourseUniqueId())
+                .courseUID(course.getCourseUID())
                 .lessonCount(0)
                 .build();
     }

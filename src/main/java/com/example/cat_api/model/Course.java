@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "courses", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "courseUniqueId")
+        @UniqueConstraint(columnNames = "courseUID")
 })
 @Getter
 @Setter
@@ -26,7 +26,7 @@ public class Course {
 
     @EqualsAndHashCode.Include // Only this field is used for equals/hashCode
     @Column(nullable = false, unique = true) // Explicit unique constraint
-    private String courseUniqueId;
+    private String courseUID;
 
     @Column(nullable = false)
     private String title;

@@ -24,19 +24,19 @@ public class LessonService {
     private final LessonRepository lessonRepo;
     private final ModuleRepository moduleRepo;
     
-    public Lesson fetchLessonByUID(String LessonUID) throws LessonNotFoundException {
-    	return lessonRepo.findByLessonUniqueId(LessonUID).orElseThrow(() -> new LessonNotFoundException("Lesson with UID: " + LessonUID + " not found!"));
+    public Lesson fetchLessonByUID(String lessonUID) throws LessonNotFoundException {
+    	return lessonRepo.findByLessonUID(lessonUID).orElseThrow(() -> new LessonNotFoundException("Lesson with UID: " + lessonUID + " not found!"));
     }
-    
-    
-    public CreatedLessonResponse addLessonToModule(String moduleUniqueId, CreateLessonRequest request) {
+
+
+    public CreatedLessonResponse addLessonToModule(String moduleUID, CreateLessonRequest request) {
         // 1. Verify Module exists
-        Module module = moduleRepo.findByModuleUniqueId(moduleUniqueId)
-                .orElseThrow(() -> new ModuleNotFoundException("Module not found with id: " + moduleUniqueId));
+        Module module = moduleRepo.findByModuleUID(moduleUID)
+                .orElseThrow(() -> new ModuleNotFoundException("Module not found with id: " + moduleUID));
 
         // 2. Create Lesson Entity
         Lesson lesson = new Lesson();
-        lesson.setLessonUniqueId(IdentifierGenerator.generate("LSN"));
+        lesson.setLessonUID(IdentifierGenerator.generate("LSN"));
         lesson.setTitle(request.getTitle());
         lesson.setContent(request.getContent());
         lesson.setCodeExample(request.getCodeExample());
@@ -69,12 +69,12 @@ public class LessonService {
 
         // 5. Return DTO
         return CreatedLessonResponse.builder()
-                .id(savedLesson.getLessonUniqueId())
+                .id(savedLesson.getLessonUID())
                 .title(savedLesson.getTitle())
                 .content(savedLesson.getContent())
                 .codeExample(savedLesson.getCodeExample())
                 .sequenceOrder(savedLesson.getSequenceOrder())
-                .moduleId(module.getModuleUniqueId())
+                .moduleId(module.getModuleUID())
                 .build();
     }
 }

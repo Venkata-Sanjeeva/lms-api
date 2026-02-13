@@ -22,7 +22,7 @@ public class Module {
 
     @Column(nullable = false, unique = true)
     @EqualsAndHashCode.Include
-    private String moduleUniqueId;
+    private String moduleUID; // Unique identifier for the module
 
     @Column(nullable = false)
     private String title;
