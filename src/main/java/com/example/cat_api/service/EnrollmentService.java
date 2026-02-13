@@ -2,31 +2,25 @@ package com.example.cat_api.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.cat_api.dto.CourseEnrollmentDto;
 import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.exceptions.UserNotFoundException;
 import com.example.cat_api.model.Course;
 import com.example.cat_api.model.CourseEnrollment;
 import com.example.cat_api.model.User;
 import com.example.cat_api.repository.CourseEnrollmentRepository;
+import com.example.cat_api.response.CourseEnrollmentResponse;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class EnrollmentService {
 
-	private CourseEnrollmentRepository courseEnrollRepo;
-	private UserService userService;
-	private CourseService courseService;
+	private final CourseEnrollmentRepository courseEnrollRepo;
+	private final UserService userService;
+	private final CourseService courseService;
 	
-	public EnrollmentService(
-			CourseEnrollmentRepository courseEnrollRepo, 
-			UserService userService, 
-			CourseService courseService) {
-		this.userService = userService;
-		this.courseService = courseService;
-		this.courseEnrollRepo = courseEnrollRepo;
-	}
-	
-	public CourseEnrollmentDto enrollUserInCourse(String userEmailId, String courseUID) throws UserNotFoundException, CourseNotFoundException {
+	public CourseEnrollmentResponse enrollUserInCourse(String userEmailId, String courseUID) throws UserNotFoundException, CourseNotFoundException {
 	    // 1. Validate User and Course existence
 	    User user = userService.getUserByEmail(userEmailId);
 	    Course course = courseService.fetchCourseByUID(courseUID);
@@ -38,13 +32,13 @@ public class EnrollmentService {
 	    enrollment = courseEnrollRepo.save(enrollment);
 
 	    // 3. Map to Response DTO
-	    return new CourseEnrollmentDto(
-	        course.getCourseUID(),
-	        course.getTitle(),
-	        user.getUserUID(),
-	        enrollment.getStatus(),
-	        enrollment.getEnrolledAt()
-	    );
+	    return CourseEnrollmentResponse.builder()
+	    		.courseUID(courseUID)
+	    		.courseTitle(course.getTitle())
+	    		.userUID(user.getUserUID())
+	    		.status(enrollment.getStatus())
+	    		.enrolledAt(enrollment.getEnrolledAt())
+	    		.build();
 	}
 	
 }

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.cat_api.dto.CourseEnrollmentDto;
 import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.exceptions.UserNotFoundException;
+import com.example.cat_api.response.CourseEnrollmentResponse;
 import com.example.cat_api.service.EnrollmentService;
 
 @RestController
@@ -30,9 +30,9 @@ public class EnrollmentController {
 			@PathVariable String courseUID,
 			Authentication authentication) {
 		try {
-			CourseEnrollmentDto enrollDto = enrollService.enrollUserInCourse(authentication.getName(), courseUID);
+			CourseEnrollmentResponse response = enrollService.enrollUserInCourse(authentication.getName(), courseUID);
 			
-			return ResponseEntity.status(HttpStatus.OK).body(enrollDto);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (UserNotFoundException userNotFoundExcep) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(userNotFoundExcep.getMessage());
 		} catch (CourseNotFoundException courseNotFoundExcep) {

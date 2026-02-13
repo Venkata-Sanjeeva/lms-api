@@ -3,7 +3,6 @@ package com.example.cat_api.model;
 import com.example.cat_api.enums.Difficulty;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

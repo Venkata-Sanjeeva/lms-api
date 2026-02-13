@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.cat_api.dto.CourseOverviewDTO;
 import com.example.cat_api.enums.Difficulty;
 import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.service.CourseService;

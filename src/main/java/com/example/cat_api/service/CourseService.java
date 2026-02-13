@@ -13,7 +13,6 @@ import com.example.cat_api.response.ModuleResponse;
 import com.example.cat_api.utils.IdentifierGenerator;
 import org.springframework.stereotype.Service;
 
-import com.example.cat_api.dto.CourseOverviewDTO;
 import com.example.cat_api.enums.Difficulty;
 import com.example.cat_api.exceptions.CourseAlreadyExistsException;
 import com.example.cat_api.exceptions.CourseNotFoundException;
@@ -41,19 +40,19 @@ public class CourseService {
     }
 	
 	// Helper method to keep the stream clean
-	private CourseOverviewDTO convertToOverviewDto(Course course) {
-	    return new CourseOverviewDTO(
-	        course.getCourseUID(),
-	        course.getTitle(),
-	        null, // thumbnail
-	        null, // instructor
-	        course.getDifficulty(),
-	        null, // rating
-	        courseEnrollRepo.countByCourseId(course.getId()),
-	        null, // duration
-	        null  // price
-	    );
-	}
+//	private CourseOverviewDTO convertToOverviewDto(Course course) {
+//	    return new CourseOverviewDTO(
+//	        course.getCourseUID(),
+//	        course.getTitle(),
+//	        null, // thumbnail
+//	        null, // instructor
+//	        course.getDifficulty(),
+//	        null, // rating
+//	        courseEnrollRepo.countByCourseId(course.getId()),
+//	        null, // duration
+//	        null  // price
+//	    );
+//	}
 	
 	public List<Course> fetchAllCourses() {
 		return courseRepo.findAll();
