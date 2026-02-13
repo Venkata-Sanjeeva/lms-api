@@ -59,7 +59,7 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/courses/{courseId}/modules/create")
+    @PostMapping("/{courseId}/modules/create")
     public ResponseEntity<?> addModuleToCourse(
         @PathVariable String courseId, 
         @RequestBody CreateModuleRequest moduleReq) {
@@ -75,7 +75,7 @@ public class AdminController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/modules/{moduleUniqueId}/lessons/create")
+    @PostMapping("/{moduleUniqueId}/lessons/create")
     public ResponseEntity<?> createLesson(
             @PathVariable String moduleUniqueId,
             @RequestBody CreateLessonRequest request) {

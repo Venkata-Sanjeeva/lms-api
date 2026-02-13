@@ -4,6 +4,7 @@ import com.example.cat_api.model.Resource;
 import com.example.cat_api.utils.IdentifierGenerator;
 import org.springframework.stereotype.Service;
 
+import com.example.cat_api.exceptions.LessonNotFoundException;
 import com.example.cat_api.exceptions.ModuleNotFoundException;
 import com.example.cat_api.model.Lesson;
 import com.example.cat_api.model.Module;
@@ -20,12 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LessonService {
 
-    private final LessonRepository lessonRepository;
-    private final ModuleRepository moduleRepository;
-
+    private final LessonRepository lessonRepo;
+    private final ModuleRepository moduleRepo;
+    
+    public Lesson fetchLessonByUID(String LessonUID) throws LessonNotFoundException {
+    	return lessonRepo.findByLessonUniqueId(LessonUID).orElseThrow(() -> new LessonNotFoundException("Lesson with UID: " + LessonUID + " not found!"));
+    }
+    
+    
     public CreatedLessonResponse addLessonToModule(String moduleUniqueId, CreateLessonRequest request) {
         // 1. Verify Module exists
-        Module module = moduleRepository.findByModuleUniqueId(moduleUniqueId)
+        Module module = moduleRepo.findByModuleUniqueId(moduleUniqueId)
                 .orElseThrow(() -> new ModuleNotFoundException("Module not found with id: " + moduleUniqueId));
 
         // 2. Create Lesson Entity
@@ -38,7 +44,7 @@ public class LessonService {
 
         // 3. Logic: Auto-increment sequenceOrder
         if (request.getSequenceOrder() == null) {
-            int maxOrder = lessonRepository.findMaxSequenceOrderByModuleId(module.getId());
+            int maxOrder = lessonRepo.findMaxSequenceOrderByModuleId(module.getId());
             lesson.setSequenceOrder(maxOrder + 1);
         } else {
             lesson.setSequenceOrder(request.getSequenceOrder());
@@ -59,7 +65,7 @@ public class LessonService {
             lesson.getResourceList().addAll(resources);
         }
 
-        Lesson savedLesson = lessonRepository.save(lesson);
+        Lesson savedLesson = lessonRepo.save(lesson);
 
         // 5. Return DTO
         return CreatedLessonResponse.builder()

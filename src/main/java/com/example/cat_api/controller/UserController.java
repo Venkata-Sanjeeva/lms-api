@@ -1,13 +1,19 @@
 package com.example.cat_api.controller;
 
 import com.example.cat_api.exceptions.CourseNotFoundException;
+import com.example.cat_api.exceptions.LessonNotFoundException;
 import com.example.cat_api.exceptions.UserAlreadyEnrolledException;
 import com.example.cat_api.exceptions.UserNotFoundException;
+import com.example.cat_api.request.UpdateProgressRequest;
 import com.example.cat_api.response.CourseEnrollResponse;
+import com.example.cat_api.response.LessonProgressResponse;
 import com.example.cat_api.service.CourseEnrollService;
+import com.example.cat_api.service.LessonProgressService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +27,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 public class UserController {
 
     private final CourseEnrollService courseEnrollService;
+    private final LessonProgressService lessonProgressService;
 
 	@Operation(summary = "Get user profile", 
 	           description = "Requires a valid JWT in the Authorization header")
@@ -41,6 +48,7 @@ public class UserController {
         return ResponseEntity.ok("These are your enrolled courses (USER endpoint).");
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/courses/{courseUniqueId}/enroll")
     public ResponseEntity<?> enrollUserInCourse(
             @PathVariable String courseUniqueId,
@@ -57,4 +65,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/progress/update")
+    public ResponseEntity<?> updateLessonProgress(@RequestBody UpdateProgressRequest request, Authentication authentication) {
+    	try {
+    		LessonProgressResponse response = lessonProgressService.updateProgress(authentication.getName(), request);
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (UserNotFoundException | LessonNotFoundException notFoundExcept) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+    }
+    
+    
 }

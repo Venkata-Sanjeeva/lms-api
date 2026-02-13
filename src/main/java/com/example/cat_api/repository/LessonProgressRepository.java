@@ -1,42 +1,30 @@
 package com.example.cat_api.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.cat_api.model.Course;
-import com.example.cat_api.model.Lesson;
 import com.example.cat_api.model.LessonProgress;
-import com.example.cat_api.model.User;
 
-public interface LessonProgressRepository extends JpaRepository<LessonProgress, Long>{
-	// Find specific progress to toggle 'isCompleted'
-    Optional<LessonProgress> findByUserAndLesson(User user, Lesson lesson);
-    
-    // 1. Get all completed lessons for a user in a specific course
-    @Query("SELECT lp FROM LessonProgress lp " +
-           "JOIN lp.lesson l " +
-           "JOIN l.module m " +
-           "WHERE lp.user = :user " +
-           "AND m.course = :course " +
-           "AND lp.isCompleted = true")
-    List<LessonProgress> findCompletedLessonsByUserAndCourse(
-        @Param("user") User user, 
-        @Param("course") Course course
+public interface LessonProgressRepository extends JpaRepository<LessonProgress, Long> {
+
+    // JPA will look into 'user.userUniqueId' and 'lesson.lessonUniqueId'
+    Optional<LessonProgress> findByUser_UserUniqueIdAndLesson_LessonUniqueId(
+        String userUid, 
+        String lessonUid
     );
 
-    // 2. Count completed lessons to calculate progress
+    // Get count using the String Course Unique ID
     @Query("SELECT COUNT(lp) FROM LessonProgress lp " +
            "JOIN lp.lesson l " +
            "JOIN l.module m " +
-           "WHERE lp.user = :user " +
-           "AND m.course = :course " +
+           "WHERE lp.user.userUniqueId = :userUid " +
+           "AND m.course.courseUniqueId = :courseUid " +
            "AND lp.isCompleted = true")
-    long countCompletedLessonsByUserAndCourse(
-        @Param("user") User user, 
-        @Param("course") Course course
+    long countCompletedByUniqueIds(
+        @Param("userUid") String userUid, 
+        @Param("courseUid") String courseUid
     );
 }

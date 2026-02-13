@@ -14,6 +14,8 @@ public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollme
 	// Check if a user is already enrolled (matches your unique constraint)
     Optional<CourseEnrollment> findByUserAndCourse(User user, Course course);
     
+    Optional<CourseEnrollment> findByUser_UserUniqueIdAndCourse_CourseUniqueId(String userUID, String courseUID);
+    
     // Get all courses a specific user is enrolled in
     List<CourseEnrollment> findByUserAndStatus(User user, CourseEnrollmentStatus status);
     
@@ -24,4 +26,7 @@ public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollme
     long countByCourseId(Long courseId);
     
     boolean existsByUserAndCourse(User user, Course course);
+    
+ // Inside CourseEnrollmentRepository
+    boolean existsByUser_UserUniqueIdAndCourse_CourseUniqueId(String userUid, String courseUid);
 }

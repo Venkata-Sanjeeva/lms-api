@@ -2,6 +2,7 @@ package com.example.cat_api.service;
 
 import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.exceptions.UserAlreadyEnrolledException;
+import com.example.cat_api.exceptions.UserNotEnrolledException;
 import com.example.cat_api.exceptions.UserNotFoundException;
 import com.example.cat_api.model.Course;
 import com.example.cat_api.model.CourseEnrollment;
@@ -11,8 +12,6 @@ import com.example.cat_api.response.CourseEnrollResponse;
 import com.example.cat_api.utils.IdentifierGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,4 +54,13 @@ public class CourseEnrollService {
                 .build();
     }
 
+    public CourseEnrollment fetchByUserUIDandCourseUID(String userUID, String courseUID) throws UserNotFoundException, CourseNotFoundException, UserNotEnrolledException {
+    	return courseEnrollRepo
+    			.findByUser_UserUniqueIdAndCourse_CourseUniqueId(userUID, courseUID)
+    			.orElseThrow(() -> new UserNotEnrolledException("User with ID: " + userUID + " not enrolled in course with ID: " + courseUID));
+    }
+    
+    public boolean existsByUserUIDAndCourseUID(String userUID, String courseUID) {
+    	return courseEnrollRepo.existsByUser_UserUniqueIdAndCourse_CourseUniqueId(userUID, courseUID);
+    }
 }
