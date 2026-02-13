@@ -9,10 +9,7 @@ import com.example.cat_api.model.CourseEnrollment;
 import com.example.cat_api.model.User;
 import com.example.cat_api.repository.UserRepository;
 import com.example.cat_api.request.UpdateProgressRequest;
-import com.example.cat_api.response.CourseEnrollResponse;
-import com.example.cat_api.response.LessonProgressResponse;
-import com.example.cat_api.response.UserCoursesResponse;
-import com.example.cat_api.response.UserEnrolledCourseResponse;
+import com.example.cat_api.response.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,19 +42,35 @@ public class UserService {
     	
     	List<CourseEnrollment> enrolledCourses = enrollService.fetchUserEnrolledList(user);
     	
-    	List<UserEnrolledCourseResponse> userEnrolledCourses = enrolledCourses.stream().map((enrollmentObj) -> {
-    		Course course = enrollmentObj.getCourse();
-    		Long totalEnrolledStdsInCourse = enrollService.fetchTotalEnrolledStdsCountForPartCourse(course.getCourseUID());
-    		
-    		return UserEnrolledCourseResponse.builder()
-    				.courseUID(course.getCourseUID())
-    				.courseTitle(course.getTitle())
-    				.courseDesc(course.getDescription())
-    				.enrolledAt(enrollmentObj.getEnrolledAt())
-    				.difficulty(course.getDifficulty().toString())
-    				.totalStdsEnrolled(totalEnrolledStdsInCourse)
-    				.build();
-    	}).toList();
+    	List<UserEnrolledCourseResponse> userEnrolledCourses = enrolledCourses
+				.stream()
+				.map((enrollmentObj) -> {
+					Course course = enrollmentObj.getCourse();
+						Long totalEnrolledStdsInCourse = enrollService.fetchTotalEnrolledStdsCountForPartCourse(course.getCourseUID());
+						return UserEnrolledCourseResponse.builder()
+								.courseUID(course.getCourseUID())
+								.courseTitle(course.getTitle())
+								.courseDesc(course.getDescription())
+								.enrolledAt(enrollmentObj.getEnrolledAt())
+								.difficulty(course.getDifficulty().toString())
+								.totalStdsEnrolled(totalEnrolledStdsInCourse)
+								.modulesList(course.getModuleList()
+										.stream().map((moduleObj) -> ModuleResponse.builder()
+												.UID(moduleObj.getModuleUID())
+												.title(moduleObj.getTitle())
+												.sequenceOrder(moduleObj.getSequenceOrder())
+												.lessons(moduleObj.getLessons()
+														.stream()
+														.map((lessonObj) -> LessonResponse.builder()
+																	.UID(lessonObj.getLessonUID())
+																	.title(lessonObj.getTitle())
+																	.sequenceOrder(lessonObj.getSequenceOrder())
+																	.build())
+														.toList())
+												.build())
+										.toList())
+								.build();
+				}).toList();
     	
     	return UserCoursesResponse.builder()
     			.userUID(userUID)

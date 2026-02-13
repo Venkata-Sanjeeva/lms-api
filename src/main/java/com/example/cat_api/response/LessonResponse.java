@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LessonResponse {
-    private Long id;
+    private String UID;
     private String title;
     private Integer sequenceOrder;
 }

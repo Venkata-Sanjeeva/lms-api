@@ -1,6 +1,7 @@
 package com.example.cat_api.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,4 +19,5 @@ public class UserEnrolledCourseResponse {
 	private LocalDateTime enrolledAt;
 	private String difficulty;
 	private Long totalStdsEnrolled;
+	private List<ModuleResponse> modulesList;
 }

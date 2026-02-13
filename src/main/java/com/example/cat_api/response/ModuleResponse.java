@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ModuleResponse {
-    private Long id;
+    private String UID;
     private String title;
     private Integer sequenceOrder;
     private List<LessonResponse> lessons;
