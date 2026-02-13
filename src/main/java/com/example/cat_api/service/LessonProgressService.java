@@ -24,14 +24,12 @@ public class LessonProgressService {
 	
 	private final LessonService lessonService;
 	private final LessonProgressRepository lessonProgressRepo;
-	private final UserService userService;
-	private final CourseEnrollService courseEnrollSevice;
+	private final EnrollmentService enrollService;
 
-    public LessonProgressResponse updateProgress(String userEmailID, UpdateProgressRequest request) throws UserNotFoundException, CourseNotFoundException, LessonNotFoundException, UserNotEnrolledException {
-    	User user = userService.getUserByEmail(userEmailID);
+    public LessonProgressResponse updateProgress(User user, UpdateProgressRequest request) throws UserNotFoundException, CourseNotFoundException, LessonNotFoundException, UserNotEnrolledException {
     	
-    	if (!courseEnrollSevice.existsByUserUIDAndCourseUID(user.getUserUID(), request.getCourseUID())) {
-    	    throw new UserNotEnrolledException("User with email ID: " + userEmailID + " not enrolled in course with ID: " + request.getCourseUID());
+    	if (!enrollService.existsByUserUIDAndCourseUID(user.getUserUID(), request.getCourseUID())) {
+    	    throw new UserNotEnrolledException("User with email ID: " + user.getEmail() + " not enrolled in course with ID: " + request.getCourseUID());
     	}
     	
     	LessonProgress progress = lessonProgressRepo.findByUser_UserUIDAndLesson_LessonUID(user.getUserUID(), request.getLessonUID())

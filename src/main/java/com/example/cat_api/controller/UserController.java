@@ -7,8 +7,8 @@ import com.example.cat_api.exceptions.UserNotFoundException;
 import com.example.cat_api.request.UpdateProgressRequest;
 import com.example.cat_api.response.CourseEnrollResponse;
 import com.example.cat_api.response.LessonProgressResponse;
-import com.example.cat_api.service.CourseEnrollService;
-import com.example.cat_api.service.LessonProgressService;
+import com.example.cat_api.response.UserCoursesResponse;
+import com.example.cat_api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,8 +26,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final CourseEnrollService courseEnrollService;
-    private final LessonProgressService lessonProgressService;
+    private final UserService userService;
 
 	@Operation(summary = "Get user profile", 
 	           description = "Requires a valid JWT in the Authorization header")
@@ -44,8 +43,15 @@ public class UserController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<?> userCourses() {
-        return ResponseEntity.ok("These are your enrolled courses (USER endpoint).");
+    public ResponseEntity<?> userCourses(Authentication authentication) {
+        try {
+			UserCoursesResponse response = userService.fetchUserEnrolledCourseDetails(authentication.getName());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (UserNotFoundException | CourseNotFoundException notFoundExcept) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -55,7 +61,7 @@ public class UserController {
             Authentication authentication
     ) {
         try {
-            CourseEnrollResponse response = courseEnrollService.enrollUserInSelectedCourse(authentication.getName(), courseUID);
+            CourseEnrollResponse response = userService.enrollUserInCourse(authentication.getName(), courseUID);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (UserAlreadyEnrolledException alreadyEnrolledExcept) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(alreadyEnrolledExcept.getMessage());
@@ -70,7 +76,7 @@ public class UserController {
     @PostMapping("/progress/update")
     public ResponseEntity<?> updateLessonProgress(@RequestBody UpdateProgressRequest request, Authentication authentication) {
     	try {
-    		LessonProgressResponse response = lessonProgressService.updateProgress(authentication.getName(), request);
+    		LessonProgressResponse response = userService.updateUserLessonProgress(authentication.getName(), request);
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (UserNotFoundException | LessonNotFoundException notFoundExcept) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
