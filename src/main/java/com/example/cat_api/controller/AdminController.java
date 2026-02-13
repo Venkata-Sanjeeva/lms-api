@@ -15,9 +15,7 @@ import com.example.cat_api.request.CreateModuleRequest;
 import com.example.cat_api.response.CreatedCourseResponse;
 import com.example.cat_api.response.CreatedLessonResponse;
 import com.example.cat_api.response.CreatedModuleResponse;
-import com.example.cat_api.service.CourseService;
-import com.example.cat_api.service.LessonService;
-import com.example.cat_api.service.ModuleService;
+import com.example.cat_api.service.AdminService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,9 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminController {
 	
-	private final CourseService courseService;
-	private final ModuleService moduleService;
-	private final LessonService lessonService;
+	private final AdminService adminService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> adminDashboard(Authentication authentication) {
@@ -49,7 +45,7 @@ public class AdminController {
     @PostMapping("/courses/create")
     public ResponseEntity<?> saveCourseInDB(@RequestBody CreateCourseRequest createCourseReq) {
     	try {
-    		CreatedCourseResponse response = courseService.saveCourseInDB(createCourseReq);
+    		CreatedCourseResponse response = adminService.createCourse(createCourseReq);
     		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (CourseAlreadyExistsException alreadyExistsException) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(alreadyExistsException.getMessage());
@@ -64,7 +60,7 @@ public class AdminController {
         @PathVariable String courseUID, 
         @RequestBody CreateModuleRequest moduleReq) {
     	try {
-    		CreatedModuleResponse response = moduleService.addModuleToCourse(courseUID, moduleReq);
+    		CreatedModuleResponse response = adminService.createModule(courseUID, moduleReq);
     		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (ModuleNotFoundException | CourseNotFoundException notFoundExcept) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
@@ -81,7 +77,7 @@ public class AdminController {
             @RequestBody CreateLessonRequest request) {
     	
     	try {
-			CreatedLessonResponse response = lessonService.addLessonToModule(moduleUID, request);
+			CreatedLessonResponse response = adminService.createLesson(moduleUID, request);
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (ModuleNotFoundException moduleNotFoundExcep) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(moduleNotFoundExcep.getMessage());

@@ -28,7 +28,6 @@ public class LessonService {
     	return lessonRepo.findByLessonUID(lessonUID).orElseThrow(() -> new LessonNotFoundException("Lesson with UID: " + lessonUID + " not found!"));
     }
 
-
     public CreatedLessonResponse addLessonToModule(String moduleUID, CreateLessonRequest request) {
         // 1. Verify Module exists
         Module module = moduleRepo.findByModuleUID(moduleUID)
