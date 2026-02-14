@@ -19,5 +19,6 @@ public class UserEnrolledCourseResponse {
 	private LocalDateTime enrolledAt;
 	private String difficulty;
 	private Long totalStdsEnrolled;
+	private Integer completionPercentage;
 	private List<ModuleResponse> modulesList;
 }

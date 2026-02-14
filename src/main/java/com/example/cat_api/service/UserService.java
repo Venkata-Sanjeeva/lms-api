@@ -4,9 +4,8 @@ import com.example.cat_api.exceptions.CourseNotFoundException;
 import com.example.cat_api.exceptions.LessonNotFoundException;
 import com.example.cat_api.exceptions.UserAlreadyEnrolledException;
 import com.example.cat_api.exceptions.UserNotFoundException;
-import com.example.cat_api.model.Course;
-import com.example.cat_api.model.CourseEnrollment;
-import com.example.cat_api.model.User;
+import com.example.cat_api.model.*;
+import com.example.cat_api.model.Module;
 import com.example.cat_api.repository.UserRepository;
 import com.example.cat_api.request.UpdateProgressRequest;
 import com.example.cat_api.response.*;
@@ -36,6 +35,50 @@ public class UserService {
         return userRepo.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with " + email + " not found!"));
     }
 
+	public Integer calculateCourseProgress(String userUID, Course course) {
+		List<Module> moduleList = course.getModuleList();
+		if (moduleList == null || moduleList.isEmpty()) return 0;
+
+		int totalCourseLessons = 0;
+		double weightedSum = 0;
+
+		for (Module module : moduleList) {
+			int moduleLessonCount = module.getLessons().size();
+			if (moduleLessonCount == 0) continue;
+
+			// Reuse your existing module progress logic
+			int modulePercentage = calculateModuleProgress(userUID, module);
+
+			// Add to weighted sum: (Percentage * Weight)
+			weightedSum += (modulePercentage * moduleLessonCount);
+			totalCourseLessons += moduleLessonCount;
+		}
+
+		if (totalCourseLessons == 0) return 0;
+
+		return (int) (weightedSum / totalCourseLessons);
+	}
+
+	public Integer calculateModuleProgress(String userUID, Module module) {
+		List<Lesson> lessonList = module.getLessons();
+		int totalLessons = lessonList.size();
+		int completedLessons = 0;
+
+		for (Lesson lesson : lessonList) {
+			LessonProgress progress = lessonProgressSevice.fetchLessonProgressByUserUIDandLessonUID(userUID, lesson.getLessonUID());
+			if (progress != null && progress.isCompleted()) {
+				completedLessons++;
+			}
+		}
+
+		// Calculate percentage for THIS specific module
+		int percentage = 0;
+		if (totalLessons > 0) {
+			percentage = (int) (((double) completedLessons / totalLessons) * 100);
+		}
+		return percentage;
+	}
+
     public UserCoursesResponse fetchUserEnrolledCourseDetails(String userEmailID) throws UserNotFoundException, CourseNotFoundException {
     	User user = getUserByEmail(userEmailID);
     	String userUID = user.getUserUID();
@@ -54,18 +97,21 @@ public class UserService {
 								.enrolledAt(enrollmentObj.getEnrolledAt())
 								.difficulty(course.getDifficulty().toString())
 								.totalStdsEnrolled(totalEnrolledStdsInCourse)
+								.completionPercentage(calculateCourseProgress(userUID, course))
 								.modulesList(course.getModuleList()
 										.stream().map((moduleObj) -> ModuleResponse.builder()
 												.UID(moduleObj.getModuleUID())
 												.title(moduleObj.getTitle())
 												.sequenceOrder(moduleObj.getSequenceOrder())
+												.completionPercentage(calculateModuleProgress(userUID, moduleObj))
 												.lessons(moduleObj.getLessons()
 														.stream()
 														.map((lessonObj) -> LessonResponse.builder()
-																	.UID(lessonObj.getLessonUID())
-																	.title(lessonObj.getTitle())
-																	.sequenceOrder(lessonObj.getSequenceOrder())
-																	.build())
+																.UID(lessonObj.getLessonUID())
+																.title(lessonObj.getTitle())
+																.sequenceOrder(lessonObj.getSequenceOrder())
+																.isCompleted(lessonProgressSevice.existsByUserUIDandLessonUID(userUID, lessonObj.getLessonUID()))
+																.build())
 														.toList())
 												.build())
 										.toList())

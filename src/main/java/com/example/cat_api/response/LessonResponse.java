@@ -13,4 +13,5 @@ public class LessonResponse {
     private String UID;
     private String title;
     private Integer sequenceOrder;
+    private Boolean isCompleted;
 }

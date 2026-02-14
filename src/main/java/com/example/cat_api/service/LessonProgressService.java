@@ -1,6 +1,7 @@
 package com.example.cat_api.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -54,4 +55,16 @@ public class LessonProgressService {
                 .completedAt(saved.getCompletedAt())
                 .build();
     }
+
+	public LessonProgress fetchLessonProgressByUserUIDandLessonUID(String userUID, String lessonUID) {
+		Optional<LessonProgress> optLesson = lessonProgressRepo.findByUser_UserUIDAndLesson_LessonUID(userUID, lessonUID);
+
+		return optLesson.orElse(null);
+	}
+
+	public Boolean existsByUserUIDandLessonUID(String userUID, String lessonUID) {
+		Optional<LessonProgress> optLesson = lessonProgressRepo.findByUser_UserUIDAndLesson_LessonUID(userUID, lessonUID);
+
+		return optLesson.isPresent();
+	}
 }

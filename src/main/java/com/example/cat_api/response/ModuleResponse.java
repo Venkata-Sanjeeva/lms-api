@@ -15,5 +15,6 @@ public class ModuleResponse {
     private String UID;
     private String title;
     private Integer sequenceOrder;
+    private Integer completionPercentage;
     private List<LessonResponse> lessons;
 }
