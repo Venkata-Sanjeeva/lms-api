@@ -78,19 +78,60 @@ public class UserService {
 		}
 		return percentage;
 	}
+	
+	public UserEnrolledCourseResponse convertEnrolledCourseToResponse(String userUID, CourseEnrollment enrolledCourse) throws CourseNotFoundException {
+		Course course = enrolledCourse.getCourse();
+		Long totalEnrolledStdsInCourse = enrollService.fetchTotalEnrolledStdsCountForPartCourse(course.getCourseUID());
+		
+		return UserEnrolledCourseResponse.builder()
+				.courseUID(course.getCourseUID())
+				.courseTitle(course.getTitle())
+				.courseDesc(course.getDescription())
+				.enrolledAt(enrolledCourse.getEnrolledAt())
+				.difficulty(course.getDifficulty().toString())
+				.totalStdsEnrolled(totalEnrolledStdsInCourse)
+				.completionPercentage(calculateCourseProgress(userUID, course))
+				.modulesList(course.getModuleList()
+						.stream().map((moduleObj) -> ModuleResponse.builder()
+								.UID(moduleObj.getModuleUID())
+								.title(moduleObj.getTitle())
+								.sequenceOrder(moduleObj.getSequenceOrder())
+								.completionPercentage(calculateModuleProgress(userUID, moduleObj))
+								.lessons(moduleObj.getLessons()
+										.stream()
+										.map((lessonObj) -> LessonResponse.builder()
+												.UID(lessonObj.getLessonUID())
+												.title(lessonObj.getTitle())
+												.sequenceOrder(lessonObj.getSequenceOrder())
+												.isCompleted(lessonProgressSevice.existsByUserUIDandLessonUID(userUID, lessonObj.getLessonUID()))
+												.build())
+										.toList())
+								.build())
+						.toList())
+				.build();
+	}
+	
+	public UserEnrolledCourseResponse fetchUserEnrolledCourseDetails(String userEmailID, String courseUID) throws UserNotFoundException, CourseNotFoundException {
+		User user = getUserByEmail(userEmailID);
+    	String userUID = user.getUserUID();
+    	
+		CourseEnrollment enrolledCourse = enrollService.fetchByUserUIDandCourseUID(userUID, courseUID);
+		
+		return convertEnrolledCourseToResponse(userUID, enrolledCourse);
+	}
 
-    public UserCoursesResponse fetchUserEnrolledCourseDetails(String userEmailID) throws UserNotFoundException, CourseNotFoundException {
+    public UserCoursesResponse fetchUserEnrolledCourses(String userEmailID) throws UserNotFoundException, CourseNotFoundException {
     	User user = getUserByEmail(userEmailID);
     	String userUID = user.getUserUID();
     	
     	List<CourseEnrollment> enrolledCourses = enrollService.fetchUserEnrolledList(user);
     	
-    	List<UserEnrolledCourseResponse> userEnrolledCourses = enrolledCourses
+    	List<EnrolledCourseResponse> userEnrolledCourses = enrolledCourses
 				.stream()
 				.map((enrollmentObj) -> {
 					Course course = enrollmentObj.getCourse();
 						Long totalEnrolledStdsInCourse = enrollService.fetchTotalEnrolledStdsCountForPartCourse(course.getCourseUID());
-						return UserEnrolledCourseResponse.builder()
+						return EnrolledCourseResponse.builder()
 								.courseUID(course.getCourseUID())
 								.courseTitle(course.getTitle())
 								.courseDesc(course.getDescription())
@@ -98,23 +139,6 @@ public class UserService {
 								.difficulty(course.getDifficulty().toString())
 								.totalStdsEnrolled(totalEnrolledStdsInCourse)
 								.completionPercentage(calculateCourseProgress(userUID, course))
-								.modulesList(course.getModuleList()
-										.stream().map((moduleObj) -> ModuleResponse.builder()
-												.UID(moduleObj.getModuleUID())
-												.title(moduleObj.getTitle())
-												.sequenceOrder(moduleObj.getSequenceOrder())
-												.completionPercentage(calculateModuleProgress(userUID, moduleObj))
-												.lessons(moduleObj.getLessons()
-														.stream()
-														.map((lessonObj) -> LessonResponse.builder()
-																.UID(lessonObj.getLessonUID())
-																.title(lessonObj.getTitle())
-																.sequenceOrder(lessonObj.getSequenceOrder())
-																.isCompleted(lessonProgressSevice.existsByUserUIDandLessonUID(userUID, lessonObj.getLessonUID()))
-																.build())
-														.toList())
-												.build())
-										.toList())
 								.build();
 				}).toList();
     	

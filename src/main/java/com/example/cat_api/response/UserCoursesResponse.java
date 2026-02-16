@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserCoursesResponse {
 	private String userUID;
-	private List<UserEnrolledCourseResponse> userEnrolledCourses;
+	private List<EnrolledCourseResponse> userEnrolledCourses;
 }

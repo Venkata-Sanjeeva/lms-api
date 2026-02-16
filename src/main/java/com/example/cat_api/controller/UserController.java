@@ -8,6 +8,7 @@ import com.example.cat_api.request.UpdateProgressRequest;
 import com.example.cat_api.response.CourseEnrollResponse;
 import com.example.cat_api.response.LessonProgressResponse;
 import com.example.cat_api.response.UserCoursesResponse;
+import com.example.cat_api.response.UserEnrolledCourseResponse;
 import com.example.cat_api.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,19 @@ public class UserController {
     @GetMapping("/courses")
     public ResponseEntity<?> userCourses(Authentication authentication) {
         try {
-			UserCoursesResponse response = userService.fetchUserEnrolledCourseDetails(authentication.getName());
+			UserCoursesResponse response = userService.fetchUserEnrolledCourses(authentication.getName());
+			return ResponseEntity.status(HttpStatus.OK).body(response);
+		} catch (UserNotFoundException | CourseNotFoundException notFoundExcept) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+    }
+    
+    @GetMapping("/courses/{courseUID}")
+    public ResponseEntity<?> userEnrolledCourseDetails(@PathVariable String courseUID, Authentication auth) {
+    	try {
+			UserEnrolledCourseResponse response = userService.fetchUserEnrolledCourseDetails(auth.getName(), courseUID);
 			return ResponseEntity.status(HttpStatus.OK).body(response);
 		} catch (UserNotFoundException | CourseNotFoundException notFoundExcept) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundExcept.getMessage());
