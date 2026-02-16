@@ -102,6 +102,8 @@ public class UserService {
 										.map((lessonObj) -> LessonResponse.builder()
 												.UID(lessonObj.getLessonUID())
 												.title(lessonObj.getTitle())
+												.content(lessonObj.getContent())
+												.codeExample(lessonObj.getCodeExample())
 												.sequenceOrder(lessonObj.getSequenceOrder())
 												.isCompleted(lessonProgressSevice.existsByUserUIDandLessonUID(userUID, lessonObj.getLessonUID()))
 												.build())

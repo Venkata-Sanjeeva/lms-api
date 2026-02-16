@@ -67,7 +67,7 @@ public class UserController {
 		}
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/courses/{courseUID}/enroll")
     public ResponseEntity<?> enrollUserInCourse(
             @PathVariable String courseUID,
@@ -85,7 +85,6 @@ public class UserController {
         }
     }
     
-    @PreAuthorize("hasRole('USER')")
     @PostMapping("/progress/update")
     public ResponseEntity<?> updateLessonProgress(@RequestBody UpdateProgressRequest request, Authentication authentication) {
     	try {

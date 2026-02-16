@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class LessonResponse {
     private String UID;
     private String title;
+    private String content;
+    private String codeExample;
     private Integer sequenceOrder;
     private Boolean isCompleted;
 }

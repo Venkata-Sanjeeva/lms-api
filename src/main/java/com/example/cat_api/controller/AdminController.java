@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin("*")
 @RequiredArgsConstructor
 public class AdminController {
 	
