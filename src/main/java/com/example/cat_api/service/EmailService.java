@@ -2,12 +2,14 @@ package com.example.cat_api.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -21,19 +23,17 @@ import com.example.cat_api.repository.PasswordResetTokenRepository;
 import com.example.cat_api.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
 	private final JavaMailSender mailSender;
+	private final ResendEmailService resendEmailService;
 	private final UserRepository userRepo;
 	private final PasswordResetTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
-	
-	public EmailService(JavaMailSender mailSender, UserRepository userRepo, PasswordResetTokenRepository tokenRepository, PasswordEncoder passwordEncoder) {
-		this.mailSender = mailSender;
-		this.userRepo = userRepo;
-		this.tokenRepository = tokenRepository;
-        this.passwordEncoder = passwordEncoder;
-	}
+    
+    @Value("${FRONTEND_URL}") 
+    private String frontendURL;
     
     @Async
     @Transactional
@@ -58,7 +58,7 @@ public class EmailService {
             tokenRepository.save(resetToken);
 
             // 4. Prepare the Email
-            String resetUrl = String.format("http://yourfrontend.com/reset-password?token=%s", token);
+            String resetUrl = String.format("%s?token=%s", frontendURL, token);
 
         	String htmlContent = String.format("""
         	    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e1e1e1; padding: 20px; border-radius: 10px;">
@@ -84,7 +84,13 @@ public class EmailService {
         	    """, resetUrl, resetUrl);
 
             // 5. Send it
-            sendHtmlEmail(email, "Reset your CAT API Password", htmlContent);
+            // sendHtmlEmail(email, "Reset your CAT API Password", htmlContent);
+        	try {
+        		resendEmailService.sendResetPasswordEmail(email, "Reset your Beyond Shorts Account Password", htmlContent);
+			} catch (Exception e) {
+				throw new MessagingException("Error sending email!!!\n" + e.getMessage());
+			}
+        	
         }
         // If user is not present, we do nothing (security best practice)
     }
